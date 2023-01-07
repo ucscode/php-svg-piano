@@ -66,6 +66,7 @@ class PHPSVGPiano {
 	
 	/*********** Methods ****************/
 	
+	private $canvas;
 	
 	private function configure() {
 		
@@ -130,7 +131,7 @@ class PHPSVGPiano {
 			$class = null;
 			
 			$text_x_axis = $black_key_axis + ( $this->black_key_width * (20 / 100) );
-			$text_y_axis = $this->black_key_height - ( $this->black_key_height * (25 / 100) );
+			$text_y_axis = ( $this->black_key_height - ( $this->black_key_height * (25 / 100) ) ) + $this->y;
 			
 			if( $touch ) {
 				$text_color = 'white';
@@ -138,13 +139,14 @@ class PHPSVGPiano {
 			} else $text_color = 'transparent';
 			
 			$index++;
-	?>
-	
-		<rect fill="<?php echo $note_color; ?>" stroke="black" x="<?php echo $black_key_axis; ?>" y="<?php echo $this->y; ?>" width="<?php echo $this->black_key_width; ?>" height="<?php echo $this->black_key_height; ?>" class="<?php echo $class; ?>" />
+
+			$this->canvas .= "
+				<rect fill='{$note_color}' stroke='black' x='{$black_key_axis}' y='{$this->y}' width='{$this->black_key_width}' height='{$this->black_key_height}' class='{$class}' />
+				<text x='{$text_x_axis}' y='{$text_y_axis}' fill='{$text_color}' class='{$class}'>{$note}</text>
+			";
+			
+		}
 		
-		<text x="<?php echo $text_x_axis; ?>" y="<?php echo $text_y_axis + $this->y; ?>" fill="<?php echo $text_color; ?>" class="<?php echo $class; ?>"><?php echo $note; ?></text>
-		
-	<?php	}
 	}
 	
 	
@@ -178,7 +180,7 @@ class PHPSVGPiano {
 			} else $touch = false;
 			
 			$text_x_axis = $white_key_axis + ( $this->white_key_width * (30 / 100) );
-			$text_y_axis = $this->white_key_height - ( $this->white_key_height * (15 / 100) );
+			$text_y_axis = ( $this->white_key_height - ( $this->white_key_height * (15 / 100) ) ) + $this->y;
 			
 			$class = null;
 			
@@ -191,14 +193,15 @@ class PHPSVGPiano {
 			
 			if( $note == 'C' ) $note .= $group;
 			
-	?>
-	
-		<rect fill="<?php echo $note_color; ?>" stroke="black" x="<?php echo $white_key_axis; ?>" y="<?php echo $this->y; ?>" width="<?php echo $this->white_key_width; ?>" height="<?php echo $this->white_key_height; ?>" class="<?php echo $class; ?>" />
+			$this->canvas .= "
+				<rect fill='{$note_color}' stroke='black' x='{$white_key_axis}' y='{$this->y}' width='{$this->white_key_width}' height='{$this->white_key_height}' class='{$class}' />
+				<text x='{$text_x_axis}' y='{$text_y_axis}' fill='{$text_color}' class='{$class}'>{$note}</text>
+			";
+			
+		}
 		
-		<text x="<?php echo $text_x_axis; ?>" y="<?php echo $text_y_axis + $this->y; ?>" fill="<?php echo $text_color; ?>" class="<?php echo $class; ?>"><?php echo $note; ?></text>
-		
-	<?php 	}
 		return $position;
+		
 	}
 	
 	
@@ -282,7 +285,7 @@ class PHPSVGPiano {
 	
 	/********* Draw The Piano ************/
 	
-	public function draw( ?string $music_notes = null, ?string $title = null ) {
+	public function draw( ?string $music_notes = null, ?string $title = null, $print = true ) {
 		
 		$this->play( $music_notes );
 		
@@ -295,25 +298,34 @@ class PHPSVGPiano {
 			$this->y = 0;
 		};
 		
-?>
+		$height = $this->piano_height + $this->y;
+		
+		$this->canvas = "
+			<svg xml:space='preserve' width='{$this->piano_width}' height='{$height}' data-phpsvgpiano>
+		";
+		
+		if( !empty($title) ) {
+			$this->canvas .= "
+				<text x='0' y='{$this->title_size}' fill='black' font-size='{$this->title_size}px' font-family='Garamond' height='{$this->title_size}'>{$title}</text>
+			";
+		}
+			
+		for( $x = 1; $x <= $this->octaves; $x++ ) {
+			$octave = $this->octave_range[ $x - 1 ] ?? null;
+			$position = $this->set_white_keys( $x, $octave );
+			$this->set_black_keys( $x, $position, $octave );
+		};
+
+		$this->canvas .= "
+			</svg>
+		";
+		
+		$svg = $this->canvas;
+		$this->canvas = null;
+		
+		return print_r( $svg, !$print );
 	
-		<svg xml:space="preserve" width="<?php echo $this->piano_width; ?>" height="<?php echo $this->piano_height + $this->y; ?>" data-phpsvgpiano>
-			
-			<?php if( !empty($title) ): ?>
-				<text x="0" y="<?php echo $this->title_size; ?>" fill="black" font-size="<?php echo $this->title_size . "px"; ?>" font-family="Garamond" height="<?php echo $this->title_size; ?>"><?php echo $title; ?></text>
-			<?php endif; ?>
-			
-			<?php 
-				for( $x = 1; $x <= $this->octaves; $x++ ) {
-					$octave = $this->octave_range[ $x - 1 ] ?? null;
-					$position = $this->set_white_keys( $x, $octave );
-					$this->set_black_keys( $x, $position, $octave );
-				};
-			?>
-			
-		</svg>
-	
-<?php	}
+	}
 	
 }
 
