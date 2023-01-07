@@ -67,6 +67,11 @@ class PHPSVGPiano {
 	/*********** Methods ****************/
 	
 	private $canvas;
+	private $svgname;
+	
+	public function __construct( ?string $name = null ) {
+		$this->svgname = $name;
+	}
 	
 	private function configure() {
 		
@@ -294,7 +299,7 @@ class PHPSVGPiano {
 		
 		$height = $this->piano_height + $this->y;
 		
-		$this->canvas = "<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='{$this->piano_width}' height='{$height}' data-phpsvgpiano=''> ";
+		$this->canvas = "<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='{$this->piano_width}' height='{$height}' data-psvgp='{$this->svgname}'> ";
 		
 		if( !empty($title) ) {
 			$this->canvas .= "<text x='0' y='{$this->title_size}' fill='black' font-size='{$this->title_size}px' font-family='Garamond' height='{$this->title_size}'>{$title}</text> ";
