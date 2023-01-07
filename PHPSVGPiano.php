@@ -26,9 +26,6 @@ class PHPSVGPiano {
 	// number of octaves
 	public $octaves = 1;
 	
-	// align title;
-	public $align_title = 'center';
-	
 	
 	/************* Private Properties ***********/
 	
@@ -276,6 +273,8 @@ class PHPSVGPiano {
 		
 		// reset touched values;
 		$this->octave_range = $this->notes_in_octave = array();
+		
+		$this->octaves = 1;
 		
 		$this->y = 0;
 		
