@@ -65,6 +65,7 @@ $piano->draw( $C_Minor_Aug );
 
 ![Sample](https://i.imgur.com/lpwYvla.png)
 
+---
 
 ### Piano Octaves
 
@@ -96,14 +97,53 @@ To specify a note octave, append a number to the note. For Example, ```C``` or `
 
 $CmAdd9 = "C, E-, G, D5";
 
-// Let's also play this in 3rd inversion
-
-$CmAdd9_3rd = "G, C5, D5, E-5";
-
 $piano->draw( $CmAdd9 );
-$piano->draw( $CmAdd9_3rd );
 
 ```
 
+![C Minor Add9](https://i.imgur.com/Uz8skvx.png)
+
+```php
+
+// Let's try a different chord
+// Minor7 = 1, b3, 5, b7;
+
+$Bbmin7 = "B-, D-5, E5, A-5"; // B-Flat;
+
+$piano->draw( $Bbmin7 );
+
+```
+
+![Imgur](https://i.imgur.com/rYRoVMV.png)
+
+---
+
+### ADDING TITLE
+
+You can display a title with the piano diagram by passing a string to the second parameter of ```draw()``` method;
+
+```php
+
+$piano->draw( "C, E-, G, B-", "C Minor 7" );
+
+```
+
+![Screenshot](https://i.imgur.com/SoccqnB.png)
+
+---
+
+### Predefined Properties
+
+You can set the width of the piano octave and the height of the piano
+
+```php
+
+$piano->octave_width = 300;
+$piano->piano_height = 60;
+$piano->draw();
+
+```
+
+![Piano Resized](https://i.imgur.com/Kw0LDAS.png)
 
 
