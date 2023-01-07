@@ -81,7 +81,7 @@ $piano->draw();
 
 ```
 
-However, you can also specify the octave of a note. 
+However, you can also specify the octave of a single note. 
 
 *This will automatically increase the piano octave if the octave specified is higher than the default.*
 
@@ -148,7 +148,7 @@ $piano->draw();
 
 ---
 
-### Finally
+### GETTING SVG AS STRING
 
 You can return the svg result as string if you don't want to print the svg directly to the browser.
 
@@ -161,6 +161,20 @@ $piano_svg = $piano->draw( null, null, false );
 echo $piano_svg;
 
 ```
+
+### Finally
+
+You can pass a name to the constructor method to classify all svg of that piano instance
+
+```php
+
+$piano = new piano( "foo" );
+
+$piano->draw( "E, G+, A", "E Sus2" );
+
+```
+
+Now the svg element will contain an attribute ```data-psvgp='foo'```
 
 ---
 
