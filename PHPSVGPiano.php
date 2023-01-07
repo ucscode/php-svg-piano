@@ -145,7 +145,7 @@ class PHPSVGPiano {
 			
 			$index++;
 
-			$this->canvas .= "<rect fill='{$note_color}' stroke='black' x='{$black_key_axis}' y='{$this->y}' width='{$this->black_key_width}' height='{$this->black_key_height}' class='{$class}' /> <text x='{$text_x_axis}' y='{$text_y_axis}' fill='{$text_color}' class='{$class}'>{$note}</text> ";
+			$this->canvas .= "<rect fill='{$note_color}' stroke='black' x='{$black_key_axis}' y='{$this->y}' width='{$this->black_key_width}' height='{$this->black_key_height}' class='{$class}' data-svg='key-black'/> <text x='{$text_x_axis}' y='{$text_y_axis}' fill='{$text_color}' class='{$class}' data-svg='text-black'>{$note}</text> ";
 			
 		}
 		
@@ -195,7 +195,7 @@ class PHPSVGPiano {
 			
 			if( $note == 'C' ) $note .= $group;
 			
-			$this->canvas .= "<rect fill='{$note_color}' stroke='black' x='{$white_key_axis}' y='{$this->y}' width='{$this->white_key_width}' height='{$this->white_key_height}' class='{$class}' /> <text x='{$text_x_axis}' y='{$text_y_axis}' fill='{$text_color}' class='{$class}'>{$note}</text> ";
+			$this->canvas .= "<rect fill='{$note_color}' stroke='black' x='{$white_key_axis}' y='{$this->y}' width='{$this->white_key_width}' height='{$this->white_key_height}' class='{$class}' data-svg='key-white'/> <text x='{$text_x_axis}' y='{$text_y_axis}' fill='{$text_color}' class='{$class}' data-svg='text-white'>{$note}</text> ";
 			
 		}
 		
@@ -302,7 +302,7 @@ class PHPSVGPiano {
 		$this->canvas = "<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' viewbox='0 0 {$this->piano_width} {$height}' height='{$height}' data-psvgp='{$this->svgname}'> ";
 		
 		if( !empty($title) ) {
-			$this->canvas .= "<text x='0' y='{$this->title_size}' fill='black' font-size='{$this->title_size}px' font-family='Garamond' height='{$this->title_size}'>{$title}</text> ";
+			$this->canvas .= "<text x='0' y='{$this->title_size}' fill='black' font-size='{$this->title_size}px' font-family='Garamond' height='{$this->title_size}' data-svg='title'>{$title}</text> ";
 		}
 			
 		for( $x = 1; $x <= $this->octaves; $x++ ) {
