@@ -312,20 +312,20 @@ class PHPSVGPiano {
 					
 					$this->svg_height = $this->piano_height + $this->y;
 					
-					$text = "<text x='0' y='{$this->title_size}' fill='black' font-size='{$this->title_size}px' font-family='Garamond' height='{$this->title_size}' data-svg='title'>{$text}</text> ";
+					$text = "<text x='0' y='{$this->title_size}' fill='black' font-size='{$this->title_size}px' font-family='Garamond' data-svg='title'>{$text}</text> ";
 					
 					break;
 					
 				case "watermark":
 					
 					$margin_top = 22;
-					$font = 16;
+					$font = 10;
 					
 					$y = $this->svg_height + $margin_top;
 					
 					$this->svg_height = $y + $font;
 					
-					$text = "<text x='0' y='{$y}' fill='#cbc7c7' font-size='{$font}px' font-family='arial' height='{$font}px' data-svg='watermark'>{$text}</text> ";
+					$text = "<text x='0' y='{$y}' fill='#cbc7c7' font-size='{$font}px' font-family='verdana' data-svg='watermark'>{$text}</text> ";
 				
 					break;
 					
