@@ -146,4 +146,31 @@ $piano->draw();
 
 ![Piano Resized](https://i.imgur.com/Kw0LDAS.png)
 
+---
+
+### Finally
+
+You can return the svg result as string if you don't want to print the svg directly to the browser.
+
+This can be achieved by passing a ```boolean``` value ```false``` to the 3rd parameter of ```draw()``` method
+
+```php
+
+$piano_svg = $piano->draw( null, null, false );
+
+echo $piano_svg;
+
+```
+
+---
+
+*That's it! Thanks for stopping by!*
+*The idea of this project was inspired by [SVGuitar](https://github.com/omnibrain/svguitar)*
+*Though they have nothing in common in terms of language but they do have something in common in terms of creating visual instrument representations*
+
+
+
+
+
+
 
