@@ -140,10 +140,7 @@ class PHPSVGPiano {
 			
 			$index++;
 
-			$this->canvas .= "
-				<rect fill='{$note_color}' stroke='black' x='{$black_key_axis}' y='{$this->y}' width='{$this->black_key_width}' height='{$this->black_key_height}' class='{$class}' />
-				<text x='{$text_x_axis}' y='{$text_y_axis}' fill='{$text_color}' class='{$class}'>{$note}</text>
-			";
+			$this->canvas .= "<rect fill='{$note_color}' stroke='black' x='{$black_key_axis}' y='{$this->y}' width='{$this->black_key_width}' height='{$this->black_key_height}' class='{$class}' /> <text x='{$text_x_axis}' y='{$text_y_axis}' fill='{$text_color}' class='{$class}'>{$note}</text> ";
 			
 		}
 		
@@ -193,10 +190,7 @@ class PHPSVGPiano {
 			
 			if( $note == 'C' ) $note .= $group;
 			
-			$this->canvas .= "
-				<rect fill='{$note_color}' stroke='black' x='{$white_key_axis}' y='{$this->y}' width='{$this->white_key_width}' height='{$this->white_key_height}' class='{$class}' />
-				<text x='{$text_x_axis}' y='{$text_y_axis}' fill='{$text_color}' class='{$class}'>{$note}</text>
-			";
+			$this->canvas .= "<rect fill='{$note_color}' stroke='black' x='{$white_key_axis}' y='{$this->y}' width='{$this->white_key_width}' height='{$this->white_key_height}' class='{$class}' /> <text x='{$text_x_axis}' y='{$text_y_axis}' fill='{$text_color}' class='{$class}'>{$note}</text> ";
 			
 		}
 		
@@ -300,14 +294,10 @@ class PHPSVGPiano {
 		
 		$height = $this->piano_height + $this->y;
 		
-		$this->canvas = "
-			<svg xml:space='preserve' width='{$this->piano_width}' height='{$height}' data-phpsvgpiano>
-		";
+		$this->canvas = "<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='{$this->piano_width}' height='{$height}' data-phpsvgpiano=''> ";
 		
 		if( !empty($title) ) {
-			$this->canvas .= "
-				<text x='0' y='{$this->title_size}' fill='black' font-size='{$this->title_size}px' font-family='Garamond' height='{$this->title_size}'>{$title}</text>
-			";
+			$this->canvas .= "<text x='0' y='{$this->title_size}' fill='black' font-size='{$this->title_size}px' font-family='Garamond' height='{$this->title_size}'>{$title}</text> ";
 		}
 			
 		for( $x = 1; $x <= $this->octaves; $x++ ) {
@@ -316,9 +306,7 @@ class PHPSVGPiano {
 			$this->set_black_keys( $x, $position, $octave );
 		};
 
-		$this->canvas .= "
-			</svg>
-		";
+		$this->canvas .= "</svg>";
 		
 		$svg = $this->canvas;
 		$this->canvas = null;
