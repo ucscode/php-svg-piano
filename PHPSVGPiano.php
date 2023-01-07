@@ -26,6 +26,8 @@ class PHPSVGPiano {
 	// number of octaves
 	public $octaves = 1;
 	
+	// water mark
+	public $watermark;
 	
 	/************* Private Properties ***********/
 	
@@ -36,6 +38,7 @@ class PHPSVGPiano {
 	private $black_key_height;
 	
 	private $piano_width;
+	private $svg_height;
 	
 	private $music_notes = array( "C", "D", "E", "F", "G", "A", "B" );
 	
@@ -64,10 +67,14 @@ class PHPSVGPiano {
 	private $title_size = 34;
 	private $margin_bottom = 20;
 	
-	/*********** Methods ****************/
+	// Drawing
 	
 	private $canvas;
 	private $svgname;
+	
+	
+	/*********** Methods ****************/
+
 	
 	public function __construct( ?string $name = null ) {
 		$this->svgname = $name;
@@ -85,6 +92,8 @@ class PHPSVGPiano {
 		
 		$this->octaves = (int)$this->octaves;
 		$this->piano_width = $this->octave_width * $this->octaves;
+		
+		$this->svg_height = $this->piano_height;
 		
 		if( empty($this->octave_range) ) $this->octave_range[] = 4;
 		
@@ -282,6 +291,52 @@ class PHPSVGPiano {
 		
 	}
 	
+	/********* Prepare Initial Text ***********/
+	
+	private function parseText( string $type, ?string $text ) {
+		
+		$text = trim($text);
+		
+		if( !empty($text) ) {
+			
+			switch( $type ) {
+				
+				case "title":
+				
+					$this->y = (int)$this->title_size + $this->margin_bottom;
+
+					if( empty($this->y) || $this->y <= $this->margin_bottom ) {
+						$title = null;
+						$this->y = 0;
+					};
+					
+					$this->svg_height = $this->piano_height + $this->y;
+					
+					$text = "<text x='0' y='{$this->title_size}' fill='black' font-size='{$this->title_size}px' font-family='Garamond' height='{$this->title_size}' data-svg='title'>{$text}</text> ";
+					
+					break;
+					
+				case "watermark":
+					
+					$margin_top = 22;
+					$font = 16;
+					
+					$y = $this->svg_height + $margin_top;
+					
+					$this->svg_height = $y + $font;
+					
+					$text = "<text x='0' y='{$y}' fill='#cbc7c7' font-size='{$font}px' font-family='arial' height='{$font}px' data-svg='watermark'>{$text}</text> ";
+				
+					break;
+					
+			};
+		
+		}
+		
+		return $text;
+		
+	}
+	
 	/********* Draw The Piano ************/
 	
 	public function draw( ?string $music_notes = null, ?string $title = null, $print = true ) {
@@ -290,27 +345,22 @@ class PHPSVGPiano {
 		
 		$this->configure();
 		
-		if( !empty($title) ) $this->y = (int)$this->title_size + $this->margin_bottom;
-
-		if( empty($this->y) || $this->y <= $this->margin_bottom ) {
-			$title = null;
-			$this->y = 0;
-		};
+		$title = $this->parseText( 'title', $title );
 		
-		$height = $this->piano_height + $this->y;
+		$watermark = $this->parseText( 'watermark', $this->watermark );
 		
-		$this->canvas = "<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' viewbox='0 0 {$this->piano_width} {$height}' height='{$height}' data-psvgp='{$this->svgname}'> ";
+		$this->canvas = "<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' viewBox='0 0 {$this->piano_width} {$this->svg_height}' data-psvgp='{$this->svgname}'> ";
 		
-		if( !empty($title) ) {
-			$this->canvas .= "<text x='0' y='{$this->title_size}' fill='black' font-size='{$this->title_size}px' font-family='Garamond' height='{$this->title_size}' data-svg='title'>{$title}</text> ";
-		}
+		if( !empty($title) ) $this->canvas .= $title;
 			
 		for( $x = 1; $x <= $this->octaves; $x++ ) {
 			$octave = $this->octave_range[ $x - 1 ] ?? null;
 			$position = $this->set_white_keys( $x, $octave );
 			$this->set_black_keys( $x, $position, $octave );
 		};
-
+		
+		if( !empty($watermark) ) $this->canvas .= $watermark;
+		
 		$this->canvas .= "</svg>";
 		
 		$svg = $this->canvas;
