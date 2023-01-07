@@ -165,7 +165,9 @@ echo $piano_svg;
 ---
 
 *That's it! Thanks for stopping by!*
+
 *The idea of this project was inspired by [SVGuitar](https://github.com/omnibrain/svguitar)*
+
 *Though they have nothing in common in terms of language but they do have something in common in terms of creating visual instrument representations*
 
 
