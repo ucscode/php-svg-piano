@@ -3,6 +3,6 @@ docker run --rm -d \
     -p 8000:8000 \
     -v "$PWD":/var/www/html \
     -w /var/www/html \
-    php:8.0-cli php -S 0.0.0.0:8000
+    php:8.2-cli php -S 0.0.0.0:8000
 
 docker stop php8.2

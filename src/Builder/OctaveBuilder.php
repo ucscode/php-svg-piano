@@ -9,7 +9,7 @@ use Ucscode\UssElement\Node\ElementNode;
 class OctaveBuilder
 {
     /**
-     * @var array{octave:int,white:PianoKey[],black:PianoKey[]}
+     * @var array{octave:int,natural:PianoKey[],accidental:PianoKey[]}
      */
     protected array $octaveComponent;
     protected ElementNode $octaveSvgGroup;
@@ -76,10 +76,10 @@ class OctaveBuilder
         foreach ($this->octaveComponent['accidental'] as $posIndex => $pianoKey) {
             // set X axis of white key
             $pianoKey
-                ->setWidth($this->configuration->getNaturalKeyWidth())
-                ->setHeight($this->configuration->getNaturalKeyHeight())
+                ->setWidth($this->configuration->getAccidentalKeyWidth())
+                ->setHeight($this->configuration->getAccidentalKeyHeight())
                 ->setXAxis($posIndex * $pianoKey->getWidth())
-                ->setYAxis($this->configuration->getNaturalKeyHeight())
+                ->setYAxis($this->configuration->getAccidentalKeyHeight())
             ;
 
             $rectNode = new ElementNode('RECT', [

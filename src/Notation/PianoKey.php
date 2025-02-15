@@ -43,7 +43,7 @@ class PianoKey
         $this->pressed = $pressed;
     }
 
-    public function getType(): string
+    public function getType(): int
     {
         return $this->pitch->getAccidental() !== null ? self::TYPE_BLACK : self::TYPE_WHITE;
     }

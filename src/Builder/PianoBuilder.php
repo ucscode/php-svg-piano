@@ -18,7 +18,7 @@ class PianoBuilder
     protected int $maxOctave = 1;
 
     /**
-     * @var array<int,array{octave:int,white:PianoKey[],black:PianoKey[]}>
+     * @var array<int,array{octave:int,natural:PianoKey[],accidental:PianoKey[]}>
      */
     protected array $keys = [];
 
