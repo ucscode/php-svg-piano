@@ -4,7 +4,6 @@ namespace Ucscode\PhpSvgPiano;
 
 abstract class AbstractPhpSvgPiano
 {
-
     protected const NOTE_REGEXP = '/^[A-G](?:\-|\+)?(?:\d{1,2})?$/';
 
     protected Configurable $configurable;
@@ -53,7 +52,7 @@ abstract class AbstractPhpSvgPiano
         $validNotes = preg_grep(self::NOTE_REGEXP, array_map('strtoupper', array_map("trim", $notes)));
 
         // prepare notes that should be in a set of octave;
-        $octaveNotes = []; 
+        $octaveNotes = [];
 
         foreach ($validNotes as $note) {
             $pitch = new Pitch($note);
@@ -64,7 +63,7 @@ abstract class AbstractPhpSvgPiano
                 $pitch->setNote(self::SUBSTITUTION[$pitch->getAccidentalNote()]);
 
                 // determine if the substitution caused a change in octave
-                switch($pitch->getNote()) {
+                switch ($pitch->getNote()) {
                     case 'C':
                         $pitch->getOctave($pitch->getOctave() + 1);
                         $pitch->setAccidental(null);

@@ -2,15 +2,19 @@
 
 namespace Ucscode\PhpSvgPiano\Notation;
 
-class NoteParser 
+class NoteParser
 {
-    public function parse(string $input): array 
+    /**
+     * @param string $input
+     * @return Pitch[]
+     */
+    public function parse(string $input): array
     {
         $notes = preg_split('/[\s,]+/', $input, -1, PREG_SPLIT_NO_EMPTY);
         $pitches = [];
 
         foreach ($notes as $note) {
-           if (preg_match($this->getNoteRegexp(), $note, $matches)) {
+            if (preg_match($this->getNoteRegexp(), $note, $matches)) {
                 $noteLetter = $matches[1];
                 $accidental = $matches[2] ?: '';
                 $octave = intval($matches[3] ?: 4); // Default octave is 4
@@ -20,7 +24,7 @@ class NoteParser
 
                 continue;
             }
-            
+
             throw new \InvalidArgumentException("Invalid note format: $note");
         }
 
