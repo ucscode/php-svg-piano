@@ -1,0 +1,25 @@
+{
+    "name": "ucscode/php-svg-piano",
+    "description": "Create astonishing high resolution piano vector for you online music tutorial master class",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Uchenna Ajah",
+            "email": "uche23mail@gmail.com",
+            "homepage": "https://ucscode.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Ucscode\\PhpSvgPiano\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Ucscode\\PhpSvgPiano\\Test\\": "test/"
+        }
+    }
+}
