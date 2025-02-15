@@ -9,11 +9,21 @@ class ComposerStaticInit2c8615ba81c1ff9ff19f3b9d1b510c10
     public static $prefixLengthsPsr4 = array (
         'U' => 
         array (
+            'Ucscode\\UssElement\\' => 19,
+            'Ucscode\\PhpSvgPiano\\Test\\' => 25,
             'Ucscode\\PhpSvgPiano\\' => 20,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
+        'Ucscode\\UssElement\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/ucscode/uss-element/src',
+        ),
+        'Ucscode\\PhpSvgPiano\\Test\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/test',
+        ),
         'Ucscode\\PhpSvgPiano\\' => 
         array (
             0 => __DIR__ . '/../..' . '/src',

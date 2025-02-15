@@ -1,14 +1,18 @@
 <?php
 
-namespace Ucscode\PhpSvgPiano;
+namespace Ucscode\PhpSvgPiano\Builder;
 
+use Ucscode\PhpSvgPiano\Configuration;
 use Ucscode\PhpSvgPiano\Notation\NoteParser;
 use Ucscode\PhpSvgPiano\Notation\PianoKey;
 use Ucscode\PhpSvgPiano\Notation\Pitch;
+use Ucscode\UssElement\Enums\NodeNameEnum;
+use Ucscode\UssElement\Node\ElementNode;
 
 class PianoBuilder
 {
     protected Configuration $configuration;
+    protected array $options = [];
 
     protected int $minOctave = 1;
     protected int $maxOctave = 1;
@@ -23,9 +27,10 @@ class PianoBuilder
      */
     protected array $inputPitches = [];
 
-    public function __construct(Configuration $configuration, ?string $notes = null)
+    public function __construct(Configuration $configuration, ?string $notes = null, array $options = [])
     {
         $this->configuration = $configuration ?? new Configuration();
+        $this->options = $options;
         !$notes ?: $this->parseAndPressNotes($notes);
         $this->generateKeys();
     }
@@ -45,19 +50,19 @@ class PianoBuilder
         foreach (range($this->minOctave, $this->maxOctave) as $octave) {
             $group = [
                 'octave' => $octave,
-                'white' => [],
-                'black' => []
+                'natural' => [],
+                'accidental' => []
             ];
 
             foreach (Pitch::NOTES as $note) {
                 // Create white key
                 $whiteKey = new PianoKey(new Pitch($note, null, $octave));
-                $group['white'][] = $this->pressPianoKey($whiteKey);
+                $group['natural'][] = $this->pressPianoKey($whiteKey);
 
                 // Add black keys for accidentals
                 if ($note !== 'E' && $note !== 'B') {
                     $blackKey = new PianoKey(new Pitch($note, Pitch::ACCIDENTAL_SHARP, $octave));
-                    $group['black'][] = $this->pressPianoKey($blackKey);
+                    $group['accidental'][] = $this->pressPianoKey($blackKey);
                 }
             }
 
@@ -81,11 +86,29 @@ class PianoBuilder
 
     public function render(): string
     {
+        $title = new TextBuilder($this->options['title'] ?? '');
+        $watermark = new TextBuilder($this->options['watermark'] ?? '');
+
+        $svgElement = new ElementNode(NodeNameEnum::NODE_SVG, [
+            'version' => '1.1',
+            'xmlns' => 'http://www.w3.org/2000/svg',
+            'xmlns:xlink' => 'http://www.w3.org/1999/xlink',
+            'viewBox' => sprintf('0 0 %s %s', $this->getPianoWidth(), $this->getPianoHeight()),
+            'data-psvgp' => '{$this->svgname}',
+        ]);
+
+        $svgElement->appendChild($title->getElement());
+
+        foreach ($this->keys as $octaveComponent) {
+            $octaveBuilder = new OctaveBuilder($octaveComponent, $this->configuration);
+            var_dump($octaveBuilder->getElement()->render(0));
+        }
+
         $svg = '<svg width="1500" height="200" xmlns="http://www.w3.org/2000/svg">';
         $x = 0;
 
         foreach ($this->keys as $group) {
-            foreach ($group['white'] as $key) {
+            foreach ($group['natural'] as $key) {
                 $color = $key->getColor() ?? $this->configuration->getNaturalKeyColor();
                 $border = $key->getBorderColor() ?? $this->configuration->getNaturalKeyBorderColor();
                 $width = $key->getWidth() ?? ($key->isAccidental() ? $this->configuration->getAccidentalKeyWidth() : $this->configuration->getNaturalKeyWidth());
@@ -125,5 +148,15 @@ class PianoBuilder
 
         $svg .= '</svg>';
         return $svg;
+    }
+
+    protected function getPianoWidth(): int
+    {
+        return 300;
+    }
+
+    protected function getPianoHeight(): int
+    {
+        return 500;
     }
 }

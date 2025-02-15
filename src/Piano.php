@@ -2,6 +2,8 @@
 
 namespace Ucscode\PhpSvgPiano;
 
+use Ucscode\PhpSvgPiano\Builder\PianoBuilder;
+
 class Piano
 {
     protected Configuration $configuration;
@@ -11,8 +13,8 @@ class Piano
         $this->configuration = $configuration ?? new Configuration();
     }
 
-    public function render(?string $notes = null): string
+    public function render(?string $notes = null, array $options = []): string
     {
-        return (new PianoBuilder($this->configuration, $notes))->render();
+        return (new PianoBuilder($this->configuration, $notes, $options))->render();
     }
 }

@@ -6,5 +6,7 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Ucscode\\UssElement\\' => array($vendorDir . '/ucscode/uss-element/src'),
+    'Ucscode\\PhpSvgPiano\\Test\\' => array($baseDir . '/test'),
     'Ucscode\\PhpSvgPiano\\' => array($baseDir . '/src'),
 );

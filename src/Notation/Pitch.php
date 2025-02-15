@@ -73,8 +73,10 @@ class Pitch
         return $this->note;
     }
 
-    public function setAccidental(string $accidental): static
+    public function setAccidental(?string $accidental): static
     {
+        !empty($accidental) ?: $accidental = null;
+
         if ($accidental !== null) {
             $accidental = trim($accidental);
 
