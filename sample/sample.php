@@ -8,7 +8,7 @@ require '../vendor/autoload.php'; // Adjust the path as needed
 $piano = new Piano();
 
 // Render the piano SVG with some notes pressed
-$svgOutput = $piano->render('C4 E4 G#4 B_ A_5');
+$svgOutput = $piano->render('C E G B_5');
 
 // Display the SVG output
 // header('Content-Type: image/svg+xml');

@@ -80,8 +80,8 @@ class PianoBuilder
 
         $octaves = array_map(fn (Pitch $pitch) => $pitch->getOctave(), $this->inputPitches);
 
-        $this->minOctave = min($octaves);
-        $this->maxOctave = max($octaves);
+        $this->minOctave = min($this->configuration->getOctaveStartPoint(), min($octaves));
+        $this->maxOctave = max($this->configuration->getOctaveEndPoint(), max($octaves));
     }
 
     protected function generateKeys(): void

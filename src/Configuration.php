@@ -17,6 +17,8 @@ class Configuration
     protected TextPattern $titlePattern;
     protected TextPattern $watermarkPattern;
     protected AccidentalTypeEnum $defaultAccidentalType;
+    protected int $octaveStartPoint = 4;
+    protected int $octaveEndPoint = 4;
 
     public function __construct()
     {
@@ -99,5 +101,29 @@ class Configuration
     public function getDefaultAccidentalType(): AccidentalTypeEnum
     {
         return $this->defaultAccidentalType;
+    }
+
+    public function setOctaveStartPoint(int $octaveStartPoint): static
+    {
+        $this->octaveStartPoint = $octaveStartPoint;
+
+        return $this;
+    }
+
+    public function getOctaveStartPoint(): int
+    {
+        return $this->octaveStartPoint;
+    }
+
+    public function setOctaveEndPoint(int $octaveEndPoint): static
+    {
+        $this->octaveEndPoint = $octaveEndPoint;
+
+        return $this;
+    }
+
+    public function getOctaveEndPoint(): int
+    {
+        return $this->octaveEndPoint;
     }
 }
