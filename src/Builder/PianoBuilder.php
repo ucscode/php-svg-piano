@@ -7,7 +7,9 @@ use Ucscode\PhpSvgPiano\Notation\NoteParser;
 use Ucscode\PhpSvgPiano\Notation\Octave;
 use Ucscode\PhpSvgPiano\Notation\PianoKey;
 use Ucscode\PhpSvgPiano\Notation\Pitch;
-use Ucscode\PhpSvgPiano\Pattern\Option;
+use Ucscode\PhpSvgPiano\Builder\Option;
+use Ucscode\PhpSvgPiano\Enums\AccidentalTypeEnum;
+use Ucscode\PhpSvgPiano\Pattern\KeyPattern;
 use Ucscode\UssElement\Enums\NodeNameEnum;
 use Ucscode\UssElement\Node\ElementNode;
 
@@ -98,8 +100,13 @@ class PianoBuilder
 
                 // Add black keys for accidentals
                 if ($note !== 'E' && $note !== 'B') {
-                    $blackKey = new PianoKey(new Pitch($note, Pitch::ACCIDENTAL_SHARP, $octaveNumber));
-                    $accidentalKeys[] = $this->configurePianoKey($blackKey);
+                    $blackKeyPitch = new Pitch($note, Pitch::ACCIDENTAL_SHARP, $octaveNumber);
+
+                    if ($this->configuration->getDefaultAccidentalType() !== AccidentalTypeEnum::TYPE_SHARP) {
+                        $blackKeyPitch = $blackKeyPitch->getEnharmonicEquivalence();
+                    }
+
+                    $accidentalKeys[] = $this->configurePianoKey(new PianoKey($blackKeyPitch));
                 }
             }
 
@@ -109,28 +116,22 @@ class PianoBuilder
 
     protected function configurePianoKey(PianoKey $pianoKey): PianoKey
     {
-        $pattern = $pianoKey->isAccidental() ?
+        $renderPattern = $pianoKey->isAccidental() ?
             $this->configuration->getAccidentalKeyPattern() :
             $this->configuration->getNaturalKeyPattern()
         ;
 
-        $pianoKey
-            ->setWidth($pattern->getWidth())
-            ->setHeight($pattern->getHeight())
-            ->setX($pattern->getX())
-            ->setY($pattern->getY())
-            ->setStroke($pattern->getStroke())
-            ->setFill($pattern->getFill())
-            ->setStrokeWidth($pattern->getStrokeWidth())
-        ;
+        $this->updateKeyPattern($pianoKey, $renderPattern->getReleasedKeyPattern());
 
         foreach ($this->inputPitches as $pitch) {
-            $isPressed = in_array($pianoKey->getPitch()->getIdentifier(), [
-                $pitch->getIdentifier(),
-                $pitch->getEnharmonicEquivalence()->getIdentifier(),
-            ], true);
+            // Press key
+            if ($pianoKey->getPitch()->matches($pitch)) {
+                if ($pitch->getAccidental() !== $pianoKey->getPitch()->getAccidental()) {
+                    $pianoKey = new PianoKey($pianoKey->getPitch()->getEnharmonicEquivalence());
+                }
 
-            !$isPressed ?: $pianoKey->setPressed(true);
+                $this->updateKeyPattern($pianoKey->setPressed(true), $renderPattern->getPressedKeyPattern());
+            }
         }
 
         return $pianoKey;
@@ -138,12 +139,16 @@ class PianoBuilder
 
     protected function getPianoWidth(): int
     {
-        return $this->configuration->getNaturalKeyPattern()->getWidth() * count(Pitch::NOTES) * count($this->octaves);
+        $keyPattern = $this->configuration->getNaturalKeyPattern()->getReleasedKeyPattern();
+
+        return $keyPattern->getWidth() * count(Pitch::NOTES) * count($this->octaves);
     }
 
     protected function getPianoHeight(): int
     {
-        return $this->configuration->getNaturalKeyPattern()->getHeight();
+        $keyPattern = $this->configuration->getNaturalKeyPattern()->getReleasedKeyPattern();
+
+        return $keyPattern->getHeight();
     }
 
     protected function buildOctaveElement(float $initialX = 0, float $initialY = 0): ElementNode
@@ -173,5 +178,18 @@ class PianoBuilder
         $elementGroup->appendChild($textGroup);
 
         return $elementGroup;
+    }
+
+    protected function updateKeyPattern(PianoKey $pianoKey, KeyPattern $keyPattern): void
+    {
+        $pianoKey
+            ->setWidth($keyPattern->getWidth())
+            ->setHeight($keyPattern->getHeight())
+            ->setX($keyPattern->getX())
+            ->setY($keyPattern->getY())
+            ->setStroke($keyPattern->getStroke())
+            ->setFill($keyPattern->getFill())
+            ->setStrokeWidth($keyPattern->getStrokeWidth())
+        ;
     }
 }

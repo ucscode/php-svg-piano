@@ -4,6 +4,7 @@ namespace Ucscode\PhpSvgPiano\Notation;
 
 use Ucscode\PhpSvgPiano\Configuration;
 use Ucscode\PhpSvgPiano\Pattern\KeyPattern;
+use Ucscode\PhpSvgPiano\Pattern\RenderPattern;
 use Ucscode\PhpSvgPiano\Pattern\TextPattern;
 use Ucscode\PhpSvgPiano\Traits\AxisMethodsTrait;
 use Ucscode\PhpSvgPiano\Traits\CoordinateTrait;
@@ -55,9 +56,11 @@ class PianoKey
         return $this->pressed;
     }
 
-    public function setPressed(bool $pressed): void
+    public function setPressed(bool $pressed): static
     {
         $this->pressed = $pressed;
+
+        return $this;
     }
 
     public function getType(): int
@@ -116,9 +119,13 @@ class PianoKey
 
     public function createTextElement(): ElementNode
     {
+        $spaceDiff = $this->getWidth() - $this->getTextPattern()->estimateWidth($this->getPitch()->getIdentifier());
+        // (half space) [element width] (half space)
+        $halfSpace = $spaceDiff / 2;
+
         $textElementAttribute = [
-            'x' => $this->getX(),
-            'y' => $this->getHeight(),
+            'x' => $this->getX() + $halfSpace,
+            'y' => $this->getBottom() * 0.92,
             'fill' => $this->getTextPattern()->getFill(),
             'stroke' => $this->getTextPattern()->getStroke(),
             'stroke-width' => $this->getTextPattern()->getStrokeWidth(),
@@ -134,16 +141,18 @@ class PianoKey
         return $svgTextNode;
     }
 
-    private function configurePianoPattern(KeyPattern $pattern): void
+    private function configurePianoPattern(RenderPattern $pattern): void
     {
+        $keyPattern = $this->isPressed() ? $pattern->getPressedKeyPattern() : $pattern->getReleasedKeyPattern();
+
         $this
-            ->setFill($pattern->getFill())
-            ->setStroke($pattern->getStroke())
-            ->setStrokeWidth($pattern->getStrokeWidth())
+            ->setFill($keyPattern->getFill())
+            ->setStroke($keyPattern->getStroke())
+            ->setStrokeWidth($keyPattern->getStrokeWidth())
         ;
 
-        $textPattern = $pattern->getTextPattern();
-        
+        $textPattern = $this->isPressed() ? $pattern->getPressedTextPattern() : $pattern->getReleasedTextPattern();
+
         $this->textPattern
             ->setFill($textPattern->getFill())
             ->setStroke($textPattern->getStroke())

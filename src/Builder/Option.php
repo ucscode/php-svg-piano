@@ -1,6 +1,6 @@
 <?php
 
-namespace Ucscode\PhpSvgPiano\Pattern;
+namespace Ucscode\PhpSvgPiano\Builder;
 
 use Ucscode\PhpSvgPiano\Traits\AttributesTrait;
 

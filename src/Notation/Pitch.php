@@ -3,6 +3,7 @@
 namespace Ucscode\PhpSvgPiano\Notation;
 
 use InvalidArgumentException;
+use Ucscode\PhpSvgPiano\Enums\AccidentalCharEnum;
 
 class Pitch
 {
@@ -70,9 +71,21 @@ class Pitch
         return $this->octave;
     }
 
+    public function getAccidentalSymbol(): ?string
+    {
+        if ($this->accidental) {
+            return $this->accidental === self::ACCIDENTAL_SHARP ?
+                AccidentalCharEnum::SHARP_SYMBOL->value :
+                AccidentalCharEnum::FLAT_SYMBOL->value
+            ;
+        }
+
+        return null;
+    }
+
     public function getAccidentalNote(): string
     {
-        return $this->note . ($this->accidental ?? '');
+        return $this->note . ($this->getAccidentalSymbol() ?? '');
     }
 
     public function getIdentifier(): string
@@ -93,6 +106,20 @@ class Pitch
         }
 
         return $this;
+    }
+
+    /**
+     * Check if the frequency of the argument matches frequency of the current pitch
+     *
+     * @param Pitch $pitch
+     * @return boolean
+     */
+    public function matches(Pitch $pitch): bool
+    {
+        return in_array($this->getIdentifier(), [
+            $pitch->getIdentifier(),
+            $pitch->getEnharmonicEquivalence()->getIdentifier(),
+        ], true);
     }
 
     protected function setNote(string $note): static

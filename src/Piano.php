@@ -3,7 +3,7 @@
 namespace Ucscode\PhpSvgPiano;
 
 use Ucscode\PhpSvgPiano\Builder\PianoBuilder;
-use Ucscode\PhpSvgPiano\Pattern\Option;
+use Ucscode\PhpSvgPiano\Builder\Option;
 
 class Piano
 {
