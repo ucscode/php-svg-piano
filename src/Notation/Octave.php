@@ -4,8 +4,6 @@ namespace Ucscode\PhpSvgPiano\Notation;
 
 class Octave
 {
-    protected int $interval;
-
     /**
      * @var PianoKey[]
      */
@@ -16,11 +14,15 @@ class Octave
      */
     protected array $accidentalKeys = [];
 
-    public function __construct(int $interval, array $naturalKeys, array $accidentalKeys)
+    public function __construct(protected int $interval, array $naturalKeys, array $accidentalKeys)
     {
-        $this->interval = $interval;
         $this->naturalKeys = $this->validateKeys($naturalKeys, 'natural', 7);
         $this->accidentalKeys = $this->validateKeys($accidentalKeys, 'accidental', 5);
+    }
+
+    public function getIndex(): int
+    {
+        return $this->interval;
     }
 
     /**

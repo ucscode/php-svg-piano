@@ -18,10 +18,10 @@ class OctaveBuilder
      */
     public function __construct(protected array $octaves)
     {
-        $this->svgGroup = new ElementNode('G'); // groups all octave
+        $this->svgGroup = new ElementNode('G', ['data-piano' => '']); // groups all octave
 
         foreach ($this->octaves as $octave) {
-            $octaveGroup = new ElementNode('G'); // groups an octave
+            $octaveGroup = new ElementNode('G', ['data-octave' => $octave->getIndex()]); // groups an octave
             $octaveGroup->appendChild($this->processPianoKeys($octave->getNaturalKeys()));
             // $octaveGroup->appendChild($this->processPianoKeys($octave->getAccidentalKeys()));
             $this->svgGroup->appendChild($octaveGroup);
@@ -38,7 +38,7 @@ class OctaveBuilder
      */
     protected function processPianoKeys(array $pianoKeys): ElementNode
     {
-        $pianoKeyGroup = new ElementNode('G'); // groups natural|accidental keys
+        $pianoKeyGroup = new ElementNode('G', ['data-notes' => 'natural']); // groups natural|accidental keys
 
         foreach ($pianoKeys as $pianoKey) {
             if ($this->lastNaturalKey) {
