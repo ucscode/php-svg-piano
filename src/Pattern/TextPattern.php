@@ -2,7 +2,7 @@
 
 namespace Ucscode\PhpSvgPiano\Pattern;
 
-class TextPattern extends Pattern
+class TextPattern extends KeyPattern
 {
     protected int $fontSize = 12;
     protected string $fontFamily = 'arial';

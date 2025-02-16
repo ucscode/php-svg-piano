@@ -3,7 +3,8 @@
 namespace Ucscode\PhpSvgPiano\Notation;
 
 use Ucscode\PhpSvgPiano\Configuration;
-use Ucscode\PhpSvgPiano\Pattern\Pattern;
+use Ucscode\PhpSvgPiano\Pattern\KeyPattern;
+use Ucscode\PhpSvgPiano\Pattern\TextPattern;
 use Ucscode\PhpSvgPiano\Traits\AxisMethodsTrait;
 use Ucscode\PhpSvgPiano\Traits\CoordinateTrait;
 use Ucscode\PhpSvgPiano\Traits\StyleTrait;
@@ -25,11 +26,13 @@ class PianoKey
     protected Pitch $pitch;
     protected bool $pressed;
     protected Attributes $attributes;
+    protected TextPattern $textPattern;
 
     public function __construct(Pitch $pitch, bool $pressed = false, ?Attributes $attributes = null)
     {
         $this->pitch = $pitch;
         $this->pressed = $pressed;
+        $this->textPattern = new TextPattern();
         $this->attributes = $attributes ?? new Attributes([
             'class' => 'piano-key'
         ]);
@@ -84,6 +87,18 @@ class PianoKey
         return $this;
     }
 
+    public function setTextPattern(TextPattern $pattern): static
+    {
+        $this->textPattern = $pattern;
+
+        return $this;
+    }
+
+    public function getTextPattern(): TextPattern
+    {
+        return $this->textPattern;
+    }
+
     public function createKeyElement(): ElementNode
     {
         $rectElementAttribute = [
@@ -104,7 +119,11 @@ class PianoKey
         $textElementAttribute = [
             'x' => $this->getX(),
             'y' => $this->getHeight(),
-            'fill' => $this->getFill(),
+            'fill' => $this->getTextPattern()->getFill(),
+            'stroke' => $this->getTextPattern()->getStroke(),
+            'stroke-width' => $this->getTextPattern()->getStrokeWidth(),
+            'font-size' => $this->getTextPattern()->getFontSize(),
+            'font-family' => $this->getTextPattern()->getFontFamily(),
             'class' => '',
             'data-svg' => 'text-white'
         ];
@@ -115,12 +134,20 @@ class PianoKey
         return $svgTextNode;
     }
 
-    private function configurePianoPattern(Pattern $pattern): void
+    private function configurePianoPattern(KeyPattern $pattern): void
     {
         $this
             ->setFill($pattern->getFill())
             ->setStroke($pattern->getStroke())
             ->setStrokeWidth($pattern->getStrokeWidth())
+        ;
+
+        $textPattern = $pattern->getTextPattern();
+        
+        $this->textPattern
+            ->setFill($textPattern->getFill())
+            ->setStroke($textPattern->getStroke())
+            ->setStrokeWidth($textPattern->getStrokeWidth())
         ;
     }
 }
