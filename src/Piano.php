@@ -14,6 +14,11 @@ class Piano
         $this->configuration = $configuration ?? new Configuration();
     }
 
+    public function getConfiguration(): Configuration
+    {
+        return $this->configuration;
+    }
+
     public function render(?string $notes = null, ?Option $options = null): string
     {
         return (new PianoBuilder($this->configuration, $notes, $options ?? new Option()))->render();

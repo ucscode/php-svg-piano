@@ -3,6 +3,7 @@
 namespace Ucscode\PhpSvgPiano\Notation;
 
 use Ucscode\PhpSvgPiano\Builder\Group;
+use Ucscode\PhpSvgPiano\Configuration;
 use Ucscode\PhpSvgPiano\Traits\CoordinateTrait;
 use Ucscode\PhpSvgPiano\Traits\DimensionTrait;
 use Ucscode\UssElement\Enums\NodeTypeEnum;
@@ -23,7 +24,7 @@ class Octave
      */
     protected array $accidentalKeys = [];
 
-    public function __construct(protected int $interval, array $naturalKeys, array $accidentalKeys)
+    public function __construct(protected int $interval, array $naturalKeys, array $accidentalKeys, protected ?Configuration $configuration = null)
     {
         $this->naturalKeys = $this->validateKeys($naturalKeys, PianoKey::TYPE_NATURAL, count(Pitch::NOTES));
         $this->accidentalKeys = $this->validateKeys($accidentalKeys, PianoKey::TYPE_ACCIDENTAL, count(Pitch::NOTES) - 2);
@@ -100,7 +101,7 @@ class Octave
         ;
     }
 
-    protected function buildElementGroup(NodeTypeEnum $nodeTypeEnum): ElementNode
+    protected function buildElementGroup(NodeTypeEnum $nodeTypeEnum): ?ElementNode
     {
         $elementGroup = new ElementNode('G', [
             'data-octave' => $this->interval
@@ -108,15 +109,22 @@ class Octave
 
         switch ($nodeTypeEnum) {
             case NodeTypeEnum::NODE_TEXT:
-                $elementGroup->appendChild($this->processPianoKeysText($this->naturalKeys, PianoKey::TYPE_NATURAL));
-                $elementGroup->appendChild($this->processPianoKeysText($this->accidentalKeys, PianoKey::TYPE_ACCIDENTAL));
+
+                $naturalKeys = $this->processPianoKeysText($this->naturalKeys, PianoKey::TYPE_NATURAL);
+                $accidentalKeys = $this->processPianoKeysText($this->accidentalKeys, PianoKey::TYPE_ACCIDENTAL);
+
+                !$naturalKeys ?: $elementGroup->appendChild($naturalKeys);
+                !$accidentalKeys ?: $elementGroup->appendChild($accidentalKeys);
+
                 break;
+
             default:
+
                 $elementGroup->appendChild($this->processPianoKeys($this->naturalKeys, PianoKey::TYPE_NATURAL));
                 $elementGroup->appendChild($this->processPianoKeys($this->accidentalKeys, PianoKey::TYPE_ACCIDENTAL));
         }
 
-        return $elementGroup;
+        return $elementGroup->getChildNodes()->count() ? $elementGroup : null;
     }
 
     /**
@@ -168,17 +176,25 @@ class Octave
      * @param integer $type
      * @return ElementNode
      */
-    protected function processPianoKeysText(array $pianoKeys, int $type): ElementNode
+    protected function processPianoKeysText(array $pianoKeys, int $type): ?ElementNode
     {
         $pianoTextGroup = new ElementNode('G', [
             'data-text' => $type === PianoKey::TYPE_NATURAL ? 'natural' : 'accidental',
         ]);
 
         foreach ($pianoKeys as $pianoKey) {
+            if (!$this->configuration->getShowPressedKeyText() && $pianoKey->isPressed()) {
+                continue;
+            };
+
+            if (!$this->configuration->getShowReleasedKeyText() && !$pianoKey->isPressed()) {
+                continue;
+            }
+
             $pianoTextGroup->appendChild($pianoKey->createTextElement());
         }
 
-        return $pianoTextGroup;
+        return $pianoTextGroup->getFirstChild() ? $pianoTextGroup : null;
     }
 
     protected function alignAccidentalKeys(string $groupName): void

@@ -110,7 +110,7 @@ class PianoBuilder
                 }
             }
 
-            $this->octaves[] = new Octave($octaveNumber, $naturalKeys, $accidentalKeys);
+            $this->octaves[] = new Octave($octaveNumber, $naturalKeys, $accidentalKeys, $this->configuration);
         }
     }
 
@@ -167,15 +167,21 @@ class PianoBuilder
                 ->arrangePianoKeys()
                 ->createSvgElementGroup()
             ;
-            // dd($elementGroup);
+
             $diagramGroup->appendChild($svgElementGroup->get('element'));
-            $textGroup->appendChild($svgElementGroup->get('text'));
+
+            if ($textGroupElement = $svgElementGroup->get('text')) {
+                $textGroup->appendChild($textGroupElement);
+            }
 
             $lastOctave = $octave;
         }
 
         $elementGroup->appendChild($diagramGroup);
-        $elementGroup->appendChild($textGroup);
+
+        if ($textGroup->getChildNodes()->count()) {
+            $elementGroup->appendChild($textGroup);
+        }
 
         return $elementGroup;
     }

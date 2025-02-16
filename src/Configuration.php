@@ -19,6 +19,8 @@ class Configuration
     protected AccidentalTypeEnum $defaultAccidentalType;
     protected int $octaveStartPoint = 4;
     protected int $octaveEndPoint = 4;
+    protected bool $showReleasedKeyText = true;
+    protected bool $showPressedKeyText = true;
 
     public function __construct()
     {
@@ -125,5 +127,29 @@ class Configuration
     public function getOctaveEndPoint(): int
     {
         return $this->octaveEndPoint;
+    }
+
+    public function setShowReleasedKeyText(bool $showReleasedKeyText): static
+    {
+        $this->showReleasedKeyText = $showReleasedKeyText;
+
+        return $this;
+    }
+
+    public function getShowReleasedKeyText(): bool
+    {
+        return $this->showReleasedKeyText;
+    }
+
+    public function setShowPressedKeyText(bool $showPressedKeyText): static
+    {
+        $this->showPressedKeyText = $showPressedKeyText;
+
+        return $this;
+    }
+
+    public function getShowPressedKeyText(): bool
+    {
+        return $this->showPressedKeyText;
     }
 }
