@@ -4,27 +4,27 @@ namespace Ucscode\PhpSvgPiano\Traits;
 
 trait DimensionTrait
 {
-    protected int $width = 0;
-    protected int $height = 0;
+    protected float $width = 0;
+    protected float $height = 0;
 
-    public function getWidth(): int
+    public function getWidth(): float
     {
         return $this->width;
     }
 
-    public function setWidth(int $width): static
+    public function setWidth(float $width): static
     {
         $this->width = $width;
 
         return $this;
     }
 
-    public function getHeight(): int
+    public function getHeight(): float
     {
         return $this->height;
     }
 
-    public function setHeight(int $height): static
+    public function setHeight(float $height): static
     {
         $this->height = $height;
 

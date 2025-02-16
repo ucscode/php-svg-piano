@@ -116,7 +116,7 @@ class PianoBuilder
         ]);
 
         $svgElement->appendChild($title->getElement());
-        $svgElement->appendChild((new OctaveBuilder($this->octaves))->getElement());
+        $svgElement->appendChild($this->buildOctaveElement());
         $svgElement->appendChild($watermark->getElement());
 
         return $svgElement->render(0);
@@ -130,5 +130,26 @@ class PianoBuilder
     protected function getPianoHeight(): int
     {
         return $this->configuration->getNaturalKeyPattern()->getHeight();
+    }
+
+    protected function buildOctaveElement(): ElementNode
+    {
+        $elementGroup = new ElementNode('G', ['data-piano' => '']); // groups all octave
+        
+        /** @var ?Octave $lastOctave */
+        $lastOctave = null;
+
+        foreach ($this->octaves as $octave) {
+            $groupElement = $octave
+                ->setX($lastOctave?->getWidth() ?? 0)
+                ->arrangePianoKeys()
+                ->createGroupElement()
+            ;
+
+            $elementGroup->appendChild($groupElement);
+            $lastOctave = $octave;
+        }
+
+        return $elementGroup;
     }
 }

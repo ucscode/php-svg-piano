@@ -2,6 +2,7 @@
 
 namespace Ucscode\PhpSvgPiano\Notation;
 
+use Ucscode\PhpSvgPiano\Builder\Group;
 use Ucscode\PhpSvgPiano\Traits\CoordinateTrait;
 use Ucscode\PhpSvgPiano\Traits\DimensionTrait;
 use Ucscode\UssElement\Node\ElementNode;
@@ -64,22 +65,8 @@ class Octave
             $this->setWidth($this->naturalKeys[count($this->naturalKeys) - 1]->getRight());
         }
         
-        // prepare accidental keys relative position
-        // example: first black key will be between 0 and 1 natural keys
-        $dimensionMapping = [
-            0 => [0, 1],
-            1 => [1, 2],
-            2 => [3, 4],
-            3 => [4, 5],
-            4 => [5, 6],
-        ];
-        
-        foreach ($this->accidentalKeys as $key => $pianoKey) {
-            $relativeNaturals = array_map(fn (int $key) => $this->naturalKeys[$key], $dimensionMapping[$key]);
-            $center = ($relativeNaturals[0]->getRight() + $relativeNaturals[1]->getX()) / 2;
-            $accidentalX = $center - ($pianoKey->getWidth() / 2);
-            $pianoKey->setX($accidentalX);
-        }
+        $this->alignAccidentalKeys('3rd');
+        $this->alignAccidentalKeys('4th');
 
         return $this;
     }
@@ -97,6 +84,24 @@ class Octave
         $pianoKeysElement->appendChild($accidentalKeysElement);
 
         return $pianoKeysElement;
+    }
+
+    public function getOctaveGroup(): Group
+    {
+        $groupA = (new Group())
+            ->add('natural', array_slice($this->naturalKeys, 0, 3))
+            ->add('accidental', array_slice($this->accidentalKeys, 0, 2))
+        ;
+
+        $groupB = (new Group())
+            ->add('natural', array_slice($this->naturalKeys, 3))
+            ->add('accidental', array_slice($this->accidentalKeys, 2))
+        ;
+
+        return (new Group())
+            ->add('3rd', $groupA)
+            ->add('4th', $groupB)
+        ;
     }
 
     /**
@@ -141,5 +146,26 @@ class Octave
         }
 
         return $pianoKeyGroup;
+    }
+
+    protected function alignAccidentalKeys(string $groupName): void
+    {
+        /** @var Group $keyGroup */
+        $keyGroup = $this->getOctaveGroup()->get($groupName);
+        /** @var PianoKey[] $naturalKeys */
+        $naturalKeys = $keyGroup->get('natural');
+        /** @var PianoKey[] $accidentalKeys */
+        $accidentalKeys = $keyGroup->get('accidental');
+
+        $naturalWidth = array_reduce($naturalKeys, fn (int $width, PianoKey $pianoKey) => $width + $pianoKey->getWidth(), 0);
+        $accidentalWidth = array_reduce($accidentalKeys, fn (int $width, PianoKey $pianoKey) => $width + $pianoKey->getWidth(), 0);
+        
+        $spaceDiff = ($naturalWidth - $accidentalWidth) / count($naturalKeys);
+        $displacement = $naturalKeys[0]->getLeft() + $spaceDiff;
+
+        foreach ($accidentalKeys as $pianoKey) {
+            $pianoKey->setX($displacement);
+            $displacement = $pianoKey->getRight() + $spaceDiff;
+        }
     }
 }

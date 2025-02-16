@@ -4,22 +4,22 @@ namespace Ucscode\PhpSvgPiano\Traits;
 
 trait AxisMethodsTrait
 {
-    public function getLeft(): int
+    public function getLeft(): float
     {
         return $this->x;
     }
 
-    public function getRight(): int
+    public function getRight(): float
     {
         return $this->x + $this->width;
     }
 
-    public function getTop(): int
+    public function getTop(): float
     {
         return $this->y;
     }
 
-    public function getBottom(): int
+    public function getBottom(): float
     {
         return $this->y + $this->height;
     }
