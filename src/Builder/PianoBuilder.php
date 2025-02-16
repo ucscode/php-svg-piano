@@ -58,8 +58,8 @@ class PianoBuilder
             'xmlns' => 'http://www.w3.org/2000/svg',
             'xmlns:xlink' => 'http://www.w3.org/1999/xlink',
             'viewBox' => sprintf(
-                '0 0 %s %s', 
-                $this->getPianoWidth(), 
+                '0 0 %s %s',
+                $this->getPianoWidth(),
                 $this->getPianoHeight() + $title->getOuterHeight() + $watermark->getOuterHeight()
             ),
             'data-psvgp' => '{$this->svgname}',

@@ -3,6 +3,7 @@
 namespace Ucscode\PhpSvgPiano\Notation;
 
 use Ucscode\PhpSvgPiano\Configuration;
+use Ucscode\PhpSvgPiano\Pattern\Pattern;
 use Ucscode\PhpSvgPiano\Traits\AxisMethodsTrait;
 use Ucscode\PhpSvgPiano\Traits\CoordinateTrait;
 use Ucscode\PhpSvgPiano\Traits\StyleTrait;
@@ -32,10 +33,13 @@ class PianoKey
         $this->attributes = $attributes ?? new Attributes([
             'class' => 'piano-key'
         ]);
-        $this
-            ->setFill($this->isAccidental() ? Configuration::ACCIDENTAL_KEY_FILL : Configuration::NATURAL_KEY_FILL)
-            ->setStroke($this->isAccidental() ? Configuration::ACCIDENTAL_KEY_STROKE : Configuration::NATURAL_KEY_STROKE)
+
+        $pattern = $this->isAccidental() ?
+            (new Configuration())->getAccidentalKeyPattern() :
+            (new Configuration())->getNaturalKeyPattern()
         ;
+
+        $this->configurePianoPattern($pattern);
     }
 
     public function getPitch(): Pitch
@@ -91,15 +95,15 @@ class PianoKey
             'height' => $this->getHeight(),
             'stroke-width' => $this->getStrokeWidth(),
         ] + $this->getAttributes()->toArray();
-        
+
         return new ElementNode('RECT', $rectElementAttribute);
     }
 
     public function createTextElement(): ElementNode
     {
         $textElementAttribute = [
-            'x' => $this->getX() + 9,
-            'y' => $this->getY() + 9,
+            'x' => $this->getX(),
+            'y' => $this->getHeight(),
             'fill' => $this->getFill(),
             'class' => '',
             'data-svg' => 'text-white'
@@ -109,5 +113,14 @@ class PianoKey
         $svgTextNode->appendChild(new TextNode($this->getPitch()->getIdentifier()));
 
         return $svgTextNode;
+    }
+
+    private function configurePianoPattern(Pattern $pattern): void
+    {
+        $this
+            ->setFill($pattern->getFill())
+            ->setStroke($pattern->getStroke())
+            ->setStrokeWidth($pattern->getStrokeWidth())
+        ;
     }
 }

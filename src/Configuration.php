@@ -7,11 +7,6 @@ use Ucscode\PhpSvgPiano\Pattern\TextPattern;
 
 class Configuration
 {
-    public const NATURAL_KEY_STROKE = '#353535ff';
-    public const NATURAL_KEY_FILL = '#f9f9f9ff';
-    public const ACCIDENTAL_KEY_STROKE = '#272727ff';
-    public const ACCIDENTAL_KEY_FILL = '#1a1a1aff';
-
     // [naturalKeyPattern.width] * 7 = [1 octave]
     // [naturalKeyPattern.height] = [piano.height]ssssss
 
@@ -22,8 +17,8 @@ class Configuration
 
     public function __construct()
     {
-        $this->naturalKeyPattern = new Pattern(30, 90, self::NATURAL_KEY_STROKE, self::NATURAL_KEY_FILL);
-        $this->accidentalKeyPattern = new Pattern(25, 55, self::ACCIDENTAL_KEY_STROKE, self::ACCIDENTAL_KEY_FILL);
+        $this->naturalKeyPattern = new Pattern(30, 90, '#353535ff', '#f9f9f9ff');
+        $this->accidentalKeyPattern = new Pattern(25, 55, '#272727ff', '#1a1a1aff');
         $this->titlePattern = (new TextPattern())->setFontSize(34);
         $this->watermarkPattern = new TextPattern();
     }

@@ -23,7 +23,7 @@ trait AttributesTrait
         if (array_key_exists($name, $this->attributes)) {
             unset($this->attributes[$name]);
         }
-        
+
         return $this;
     }
 }

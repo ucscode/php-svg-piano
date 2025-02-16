@@ -5,6 +5,7 @@ namespace Ucscode\PhpSvgPiano\Notation;
 use Ucscode\PhpSvgPiano\Builder\Group;
 use Ucscode\PhpSvgPiano\Traits\CoordinateTrait;
 use Ucscode\PhpSvgPiano\Traits\DimensionTrait;
+use Ucscode\UssElement\Enums\NodeTypeEnum;
 use Ucscode\UssElement\Node\ElementNode;
 
 class Octave
@@ -66,7 +67,7 @@ class Octave
         if (!empty($this->naturalKeys)) {
             $this->setWidth($this->naturalKeys[count($this->naturalKeys) - 1]->getRight());
         }
-        
+
         $this->alignAccidentalKeys('3rd');
         $this->alignAccidentalKeys('4th');
 
@@ -75,33 +76,10 @@ class Octave
 
     public function createSvgElementGroup(): Group
     {
-        $elementGroup = new Group();
-
-        $pianoKeysGroupElement = new ElementNode('G', [
-            'data-octave' => $this->interval
-        ]);
-        
-        $naturalKeysElement = $this->processPianoKeys($this->naturalKeys, PianoKey::TYPE_NATURAL);
-        $accidentalKeysElement = $this->processPianoKeys($this->accidentalKeys, PianoKey::TYPE_ACCIDENTAL);
-
-        $pianoKeysGroupElement->appendChild($naturalKeysElement);
-        $pianoKeysGroupElement->appendChild($accidentalKeysElement);
-
-        $elementGroup->set('element', $pianoKeysGroupElement);
-
-        $pianoKeysTextGroupElement = new ElementNode('G', [
-            'data-octave' => $this->interval
-        ]);
-
-        $naturalKeysTextElement = $this->processPianoKeysText($this->naturalKeys, PianoKey::TYPE_NATURAL);
-        $accidentalKeysTextElement = $this->processPianoKeysText($this->accidentalKeys, PianoKey::TYPE_ACCIDENTAL);
-
-        $pianoKeysTextGroupElement->appendChild($naturalKeysTextElement);
-        $pianoKeysTextGroupElement->appendChild($accidentalKeysTextElement);
-
-        $elementGroup->set('text', $pianoKeysTextGroupElement);
-
-        return $elementGroup;
+        return (new Group())
+            ->set('element', $this->buildElementGroup(NodeTypeEnum::NODE_ELEMENT))
+            ->set('text', $this->buildElementGroup(NodeTypeEnum::NODE_TEXT))
+        ;
     }
 
     public function getOctaveGroup(): Group
@@ -120,6 +98,25 @@ class Octave
             ->set('3rd', $groupA)
             ->set('4th', $groupB)
         ;
+    }
+
+    protected function buildElementGroup(NodeTypeEnum $nodeTypeEnum): ElementNode
+    {
+        $elementGroup = new ElementNode('G', [
+            'data-octave' => $this->interval
+        ]);
+
+        switch ($nodeTypeEnum) {
+            case NodeTypeEnum::NODE_TEXT:
+                $elementGroup->appendChild($this->processPianoKeysText($this->naturalKeys, PianoKey::TYPE_NATURAL));
+                $elementGroup->appendChild($this->processPianoKeysText($this->accidentalKeys, PianoKey::TYPE_ACCIDENTAL));
+                break;
+            default:
+                $elementGroup->appendChild($this->processPianoKeys($this->naturalKeys, PianoKey::TYPE_NATURAL));
+                $elementGroup->appendChild($this->processPianoKeys($this->accidentalKeys, PianoKey::TYPE_ACCIDENTAL));
+        }
+
+        return $elementGroup;
     }
 
     /**
@@ -157,7 +154,7 @@ class Octave
     {
         $pianoKeyGroup = new ElementNode('G', [
             'data-notes' => $type === PianoKey::TYPE_NATURAL ? 'natural' : 'accidental',
-        ]); 
+        ]);
 
         foreach ($pianoKeys as $pianoKey) {
             $pianoKeyGroup->appendChild($pianoKey->createKeyElement());
@@ -175,7 +172,7 @@ class Octave
     {
         $pianoTextGroup = new ElementNode('G', [
             'data-text' => $type === PianoKey::TYPE_NATURAL ? 'natural' : 'accidental',
-        ]); 
+        ]);
 
         foreach ($pianoKeys as $pianoKey) {
             $pianoTextGroup->appendChild($pianoKey->createTextElement());
@@ -195,7 +192,7 @@ class Octave
 
         $naturalWidth = array_reduce($naturalKeys, fn (int $width, PianoKey $pianoKey) => $width + $pianoKey->getWidth(), 0);
         $accidentalWidth = array_reduce($accidentalKeys, fn (int $width, PianoKey $pianoKey) => $width + $pianoKey->getWidth(), 0);
-        
+
         $spaceDiff = ($naturalWidth - $accidentalWidth) / count($naturalKeys);
         $displacement = $naturalKeys[0]->getLeft() + $spaceDiff;
 
