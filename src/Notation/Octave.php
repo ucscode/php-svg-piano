@@ -52,6 +52,8 @@ class Octave
     public function arrangePianoKeys(): static
     {
         foreach ($this->naturalKeys as $key => $pianoKey) {
+            $pianoKey->setY($this->getY());
+
             if (!$key) {
                 $pianoKey->setX($this->getX());
                 continue;
@@ -71,36 +73,52 @@ class Octave
         return $this;
     }
 
-    public function createGroupElement(): ElementNode
+    public function createSvgElementGroup(): Group
     {
-        $pianoKeysElement = new ElementNode('G', [
+        $elementGroup = new Group();
+
+        $pianoKeysGroupElement = new ElementNode('G', [
             'data-octave' => $this->interval
         ]);
         
         $naturalKeysElement = $this->processPianoKeys($this->naturalKeys, PianoKey::TYPE_NATURAL);
         $accidentalKeysElement = $this->processPianoKeys($this->accidentalKeys, PianoKey::TYPE_ACCIDENTAL);
 
-        $pianoKeysElement->appendChild($naturalKeysElement);
-        $pianoKeysElement->appendChild($accidentalKeysElement);
+        $pianoKeysGroupElement->appendChild($naturalKeysElement);
+        $pianoKeysGroupElement->appendChild($accidentalKeysElement);
 
-        return $pianoKeysElement;
+        $elementGroup->set('element', $pianoKeysGroupElement);
+
+        $pianoKeysTextGroupElement = new ElementNode('G', [
+            'data-octave' => $this->interval
+        ]);
+
+        $naturalKeysTextElement = $this->processPianoKeysText($this->naturalKeys, PianoKey::TYPE_NATURAL);
+        $accidentalKeysTextElement = $this->processPianoKeysText($this->accidentalKeys, PianoKey::TYPE_ACCIDENTAL);
+
+        $pianoKeysTextGroupElement->appendChild($naturalKeysTextElement);
+        $pianoKeysTextGroupElement->appendChild($accidentalKeysTextElement);
+
+        $elementGroup->set('text', $pianoKeysTextGroupElement);
+
+        return $elementGroup;
     }
 
     public function getOctaveGroup(): Group
     {
         $groupA = (new Group())
-            ->add('natural', array_slice($this->naturalKeys, 0, 3))
-            ->add('accidental', array_slice($this->accidentalKeys, 0, 2))
+            ->set('natural', array_slice($this->naturalKeys, 0, 3))
+            ->set('accidental', array_slice($this->accidentalKeys, 0, 2))
         ;
 
         $groupB = (new Group())
-            ->add('natural', array_slice($this->naturalKeys, 3))
-            ->add('accidental', array_slice($this->accidentalKeys, 2))
+            ->set('natural', array_slice($this->naturalKeys, 3))
+            ->set('accidental', array_slice($this->accidentalKeys, 2))
         ;
 
         return (new Group())
-            ->add('3rd', $groupA)
-            ->add('4th', $groupB)
+            ->set('3rd', $groupA)
+            ->set('4th', $groupB)
         ;
     }
 
@@ -142,10 +160,28 @@ class Octave
         ]); 
 
         foreach ($pianoKeys as $pianoKey) {
-            $pianoKeyGroup->appendChild($pianoKey->createElement());
+            $pianoKeyGroup->appendChild($pianoKey->createKeyElement());
         }
 
         return $pianoKeyGroup;
+    }
+
+    /**
+     * @param PianoKey[] $pianoKeys
+     * @param integer $type
+     * @return ElementNode
+     */
+    protected function processPianoKeysText(array $pianoKeys, int $type): ElementNode
+    {
+        $pianoTextGroup = new ElementNode('G', [
+            'data-text' => $type === PianoKey::TYPE_NATURAL ? 'natural' : 'accidental',
+        ]); 
+
+        foreach ($pianoKeys as $pianoKey) {
+            $pianoTextGroup->appendChild($pianoKey->createTextElement());
+        }
+
+        return $pianoTextGroup;
     }
 
     protected function alignAccidentalKeys(string $groupName): void
@@ -164,7 +200,10 @@ class Octave
         $displacement = $naturalKeys[0]->getLeft() + $spaceDiff;
 
         foreach ($accidentalKeys as $pianoKey) {
-            $pianoKey->setX($displacement);
+            $pianoKey
+                ->setX($displacement)
+                ->setY($this->getY())
+            ;
             $displacement = $pianoKey->getRight() + $spaceDiff;
         }
     }

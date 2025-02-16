@@ -80,7 +80,7 @@ class PianoKey
         return $this;
     }
 
-    public function createElement(): ElementNode
+    public function createKeyElement(): ElementNode
     {
         $rectElementAttribute = [
             'fill' => $this->getFill(),
@@ -91,22 +91,23 @@ class PianoKey
             'height' => $this->getHeight(),
             'stroke-width' => $this->getStrokeWidth(),
         ] + $this->getAttributes()->toArray();
+        
+        return new ElementNode('RECT', $rectElementAttribute);
+    }
 
+    public function createTextElement(): ElementNode
+    {
         $textElementAttribute = [
-            'x' => $this->getX() - 5,
-            'y' => $this->getY() - 5,
+            'x' => $this->getX() + 9,
+            'y' => $this->getY() + 9,
             'fill' => $this->getFill(),
             'class' => '',
             'data-svg' => 'text-white'
         ];
-        
-        $svgRectNode = new ElementNode('RECT', $rectElementAttribute);
+
         $svgTextNode = new ElementNode('TEXT', $textElementAttribute);
-        $textNode = new TextNode($this->getPitch()->getIdentifier());
+        $svgTextNode->appendChild(new TextNode($this->getPitch()->getIdentifier()));
 
-        $svgRectNode->appendChild($svgTextNode);
-        $svgTextNode->appendChild($textNode);
-
-        return $svgRectNode;
+        return $svgTextNode;
     }
 }

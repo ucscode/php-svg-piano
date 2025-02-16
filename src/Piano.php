@@ -3,6 +3,7 @@
 namespace Ucscode\PhpSvgPiano;
 
 use Ucscode\PhpSvgPiano\Builder\PianoBuilder;
+use Ucscode\PhpSvgPiano\Pattern\Option;
 
 class Piano
 {
@@ -13,8 +14,8 @@ class Piano
         $this->configuration = $configuration ?? new Configuration();
     }
 
-    public function render(?string $notes = null, array $options = []): string
+    public function render(?string $notes = null, ?Option $options = null): string
     {
-        return (new PianoBuilder($this->configuration, $notes, $options))->render();
+        return (new PianoBuilder($this->configuration, $notes, $options ?? new Option()))->render();
     }
 }

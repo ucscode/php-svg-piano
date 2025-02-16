@@ -7,13 +7,14 @@ use Ucscode\PhpSvgPiano\Notation\NoteParser;
 use Ucscode\PhpSvgPiano\Notation\Octave;
 use Ucscode\PhpSvgPiano\Notation\PianoKey;
 use Ucscode\PhpSvgPiano\Notation\Pitch;
+use Ucscode\PhpSvgPiano\Pattern\Option;
 use Ucscode\UssElement\Enums\NodeNameEnum;
 use Ucscode\UssElement\Node\ElementNode;
 
 class PianoBuilder
 {
     protected Configuration $configuration;
-    protected array $options = [];
+    protected Option $options;
 
     protected int $minOctave = 1;
     protected int $maxOctave = 1;
@@ -30,12 +31,45 @@ class PianoBuilder
      */
     protected array $inputPitches = [];
 
-    public function __construct(Configuration $configuration, ?string $notes = null, array $options = [])
+    public function __construct(Configuration $configuration, ?string $notes = null, ?Option $options = null)
     {
         $this->configuration = $configuration ?? new Configuration();
-        $this->options = $options;
+        $this->options = $options ?? new Option();
         !$notes ?: $this->parseAndPressNotes($notes);
         $this->generateKeys();
+    }
+
+    public function render(): string
+    {
+        $title = new TextBuilder(
+            $this->options->get('title') ?? 'Cmaj7',
+            $this->options->get('titleAttributes')
+        );
+
+        $title->setSpaceBottom(10);
+
+        $watermark = new TextBuilder(
+            $this->options->get('watermark') ?? '',
+            $this->options->get('watermarkAttributes')
+        );
+
+        $svgElement = new ElementNode(NodeNameEnum::NODE_SVG, [
+            'version' => '1.1',
+            'xmlns' => 'http://www.w3.org/2000/svg',
+            'xmlns:xlink' => 'http://www.w3.org/1999/xlink',
+            'viewBox' => sprintf(
+                '0 0 %s %s', 
+                $this->getPianoWidth(), 
+                $this->getPianoHeight() + $title->getOuterHeight() + $watermark->getOuterHeight()
+            ),
+            'data-psvgp' => '{$this->svgname}',
+        ]);
+
+        $svgElement->appendChild($title->getElement());
+        $svgElement->appendChild($this->buildOctaveElement(0, $title->getOuterHeight()));
+        $svgElement->appendChild($watermark->getElement());
+
+        return $svgElement->render(0);
     }
 
     protected function parseAndPressNotes(string $notes): void
@@ -102,26 +136,6 @@ class PianoBuilder
         return $pianoKey;
     }
 
-    public function render(): string
-    {
-        $title = new TextBuilder($this->options['title'] ?? '');
-        $watermark = new TextBuilder($this->options['watermark'] ?? '');
-
-        $svgElement = new ElementNode(NodeNameEnum::NODE_SVG, [
-            'version' => '1.1',
-            'xmlns' => 'http://www.w3.org/2000/svg',
-            'xmlns:xlink' => 'http://www.w3.org/1999/xlink',
-            'viewBox' => sprintf('0 0 %s %s', $this->getPianoWidth(), $this->getPianoHeight()),
-            'data-psvgp' => '{$this->svgname}',
-        ]);
-
-        $svgElement->appendChild($title->getElement());
-        $svgElement->appendChild($this->buildOctaveElement());
-        $svgElement->appendChild($watermark->getElement());
-
-        return $svgElement->render(0);
-    }
-
     protected function getPianoWidth(): int
     {
         return $this->configuration->getNaturalKeyPattern()->getWidth() * count(Pitch::NOTES) * count($this->octaves);
@@ -132,23 +146,31 @@ class PianoBuilder
         return $this->configuration->getNaturalKeyPattern()->getHeight();
     }
 
-    protected function buildOctaveElement(): ElementNode
+    protected function buildOctaveElement(float $initialX = 0, float $initialY = 0): ElementNode
     {
         $elementGroup = new ElementNode('G', ['data-piano' => '']); // groups all octave
-        
+        $diagramGroup = new ElementNode('G', ['data-diagram' => '']);
+        $textGroup = new ElementNode('G', ['data-diagram-text' => '']);
+
         /** @var ?Octave $lastOctave */
         $lastOctave = null;
 
         foreach ($this->octaves as $octave) {
-            $groupElement = $octave
-                ->setX($lastOctave?->getWidth() ?? 0)
+            $svgElementGroup = $octave
+                ->setX($lastOctave?->getWidth() ?? $initialX)
+                ->setY($initialY)
                 ->arrangePianoKeys()
-                ->createGroupElement()
+                ->createSvgElementGroup()
             ;
+            // dd($elementGroup);
+            $diagramGroup->appendChild($svgElementGroup->get('element'));
+            $textGroup->appendChild($svgElementGroup->get('text'));
 
-            $elementGroup->appendChild($groupElement);
             $lastOctave = $octave;
         }
+
+        $elementGroup->appendChild($diagramGroup);
+        $elementGroup->appendChild($textGroup);
 
         return $elementGroup;
     }
