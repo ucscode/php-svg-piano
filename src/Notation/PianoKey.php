@@ -2,18 +2,19 @@
 
 namespace Ucscode\PhpSvgPiano\Notation;
 
-use Ucscode\PhpSvgPiano\Traits\AxisTrait;
+use Ucscode\PhpSvgPiano\Configuration;
+use Ucscode\PhpSvgPiano\Traits\CoordinateTrait;
 use Ucscode\PhpSvgPiano\Traits\ColorTrait;
 use Ucscode\PhpSvgPiano\Traits\DimensionTrait;
 
 class PianoKey
 {
     use DimensionTrait;
-    use AxisTrait;
+    use CoordinateTrait;
     use ColorTrait;
 
-    public const TYPE_WHITE = 0;
-    public const TYPE_BLACK = 1;
+    public const TYPE_NATURAL = 0;
+    public const TYPE_ACCIDENTAL = 1;
 
     protected Pitch $pitch;
     protected bool $pressed;
@@ -23,8 +24,8 @@ class PianoKey
         $this->pitch = $pitch;
         $this->pressed = $pressed;
         $this
-            ->setFill($this->isAccidental() ? '#000' : '#fff')
-            ->setStroke('#000')
+            ->setFill($this->isAccidental() ? Configuration::ACCIDENTAL_KEY_FILL : Configuration::NATURAL_KEY_FILL)
+            ->setStroke($this->isAccidental() ? Configuration::ACCIDENTAL_KEY_STROKE : Configuration::NATURAL_KEY_STROKE)
         ;
     }
 
@@ -45,21 +46,16 @@ class PianoKey
 
     public function getType(): int
     {
-        return $this->pitch->getAccidental() !== null ? self::TYPE_BLACK : self::TYPE_WHITE;
+        return $this->pitch->getAccidental() !== null ? self::TYPE_ACCIDENTAL : self::TYPE_NATURAL;
     }
 
-    public function isWhiteKey(): bool
+    public function isNatural(): bool
     {
-        return $this->getType() === self::TYPE_WHITE;
-    }
-
-    public function isBlackKey(): bool
-    {
-        return $this->getType() === self::TYPE_BLACK;
+        return $this->getType() === self::TYPE_NATURAL;
     }
 
     public function isAccidental(): bool
     {
-        return $this->isBlackKey();
+        return $this->getType() === self::TYPE_ACCIDENTAL;
     }
 }

@@ -47,6 +47,7 @@ class Pitch
         $this->setNote($note);
         $this->setAccidental($accidental);
         $this->setOctave($octave);
+        $this->harmonizeNote();
     }
 
     public function __toString(): string
@@ -54,54 +55,14 @@ class Pitch
         return $this->getIdentifier();
     }
 
-    public function setNote(string $note): static
-    {
-        $note = strtoupper(trim($note));
-
-        if (!in_array($note, self::NOTES)) {
-            throw new InvalidArgumentException("Invalid note: $note");
-        }
-
-        $this->note = $note;
-        $this->harmonizeNote();
-
-        return $this;
-    }
-
     public function getNote(): string
     {
         return $this->note;
     }
 
-    public function setAccidental(?string $accidental): static
-    {
-        !empty($accidental) ?: $accidental = null;
-
-        if ($accidental !== null) {
-            $accidental = trim($accidental);
-
-            if (!in_array($accidental, [self::ACCIDENTAL_FLAT, self::ACCIDENTAL_SHARP])) {
-                throw new InvalidArgumentException("Invalid accidental: $accidental");
-            }
-        }
-
-        $this->accidental = $accidental;
-        $this->harmonizeNote();
-
-        return $this;
-    }
-
     public function getAccidental(): ?string
     {
         return $this->accidental;
-    }
-
-    public function setOctave(int $octave): static
-    {
-        $this->octave = $octave;
-        $this->harmonizeNote();
-
-        return $this;
     }
 
     public function getOctave(): int
@@ -122,14 +83,51 @@ class Pitch
     public function getEnharmonicEquivalence(): static
     {
         if ($this->accidental === self::ACCIDENTAL_SHARP) {
-            $prevNote = $this->getPreviousNote();
+            $prevNote = $this->getNextNote();
             return new self($prevNote, self::ACCIDENTAL_FLAT, $this->octave);
         }
 
         if ($this->accidental === self::ACCIDENTAL_FLAT) {
-            $nextNote = $this->getNextNote();
+            $nextNote = $this->getPreviousNote();
             return new self($nextNote, self::ACCIDENTAL_SHARP, $this->octave);
         }
+
+        return $this;
+    }
+
+    protected function setNote(string $note): static
+    {
+        $note = strtoupper(trim($note));
+
+        if (!in_array($note, self::NOTES)) {
+            throw new InvalidArgumentException("Invalid note: $note");
+        }
+
+        $this->note = $note;
+
+        return $this;
+    }
+
+    protected function setAccidental(?string $accidental): static
+    {
+        !empty($accidental) ?: $accidental = null;
+
+        if ($accidental !== null) {
+            $accidental = trim($accidental);
+
+            if (!in_array($accidental, [self::ACCIDENTAL_FLAT, self::ACCIDENTAL_SHARP])) {
+                throw new InvalidArgumentException("Invalid accidental: $accidental");
+            }
+        }
+
+        $this->accidental = $accidental;
+
+        return $this;
+    }
+
+    protected function setOctave(int $octave): static
+    {
+        $this->octave = $octave;
 
         return $this;
     }
@@ -143,6 +141,7 @@ class Pitch
         }
 
         $substitution = self::SUBSTITUTION[$accidentalNote];
+
         $this->note = $substitution['note'];
         $this->octave += $substitution['octave'];
         $this->accidental = null;

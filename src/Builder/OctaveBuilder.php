@@ -2,23 +2,17 @@
 
 namespace Ucscode\PhpSvgPiano\Builder;
 
-use Ucscode\PhpSvgPiano\Configuration;
-use Ucscode\PhpSvgPiano\Notation\PianoKey;
+use Ucscode\PhpSvgPiano\Notation\Octave;
 use Ucscode\UssElement\Node\ElementNode;
 
 class OctaveBuilder
 {
-    /**
-     * @var array{octave:int,natural:PianoKey[],accidental:PianoKey[]}
-     */
-    protected array $octaveComponent;
+    protected Octave $octave;
     protected ElementNode $octaveSvgGroup;
-    protected Configuration $configuration;
 
-    public function __construct(array $octaveComponent, Configuration $configuration)
+    public function __construct(Octave $octave, protected int $index)
     {
-        $this->configuration = $configuration;
-        $this->octaveComponent = $octaveComponent;
+        $this->octave = $octave;
         $this->octaveSvgGroup = new ElementNode('G');
         $this->buildNaturalOctaveKeys();
         $this->buildAccidentalOctaveKeys();
@@ -33,20 +27,14 @@ class OctaveBuilder
     {
         $group = new ElementNode('G');
 
-        foreach ($this->octaveComponent['natural'] as $posIndex => $pianoKey) {
+        foreach ($this->octave->getNaturalKeys() as $pianoKey) {
             // set X axis of white key
-            $pianoKey
-                ->setWidth($this->configuration->getNaturalKeyWidth())
-                ->setHeight($this->configuration->getNaturalKeyHeight())
-                ->setXAxis($posIndex * $pianoKey->getWidth())
-                ->setYAxis($this->configuration->getNaturalKeyHeight())
-            ;
 
             $rectNode = new ElementNode('RECT', [
                 'fill' => $pianoKey->getFill(),
                 'stroke' => $pianoKey->getStroke(),
-                'x' => $pianoKey->getXAxis(),
-                'y' => $pianoKey->getYAxis(),
+                'x' => $pianoKey->getX(),
+                'y' => $pianoKey->getY(),
                 'width' => $pianoKey->getWidth(),
                 'height' => $pianoKey->getHeight(),
                 'class' => '',
@@ -54,8 +42,8 @@ class OctaveBuilder
             ]);
 
             $textNode = new ElementNode('TEXT', [
-                'x' => $pianoKey->getXAxis() - 5,
-                'y' => $pianoKey->getYAxis() - 5,
+                'x' => $pianoKey->getX() - 5,
+                'y' => $pianoKey->getY() - 5,
                 'fill' => $pianoKey->getFill(),
                 'class' => '',
                 'data-svg' => 'text-white'
@@ -73,20 +61,13 @@ class OctaveBuilder
     {
         $group = new ElementNode('G');
 
-        foreach ($this->octaveComponent['accidental'] as $posIndex => $pianoKey) {
+        foreach ($this->octave->getAccidentalKeys() as $pianoKey) {
             // set X axis of white key
-            $pianoKey
-                ->setWidth($this->configuration->getAccidentalKeyWidth())
-                ->setHeight($this->configuration->getAccidentalKeyHeight())
-                ->setXAxis($posIndex * $pianoKey->getWidth())
-                ->setYAxis($this->configuration->getAccidentalKeyHeight())
-            ;
-
             $rectNode = new ElementNode('RECT', [
                 'fill' => $pianoKey->getFill(),
                 'stroke' => $pianoKey->getStroke(),
-                'x' => $pianoKey->getXAxis(),
-                'y' => $pianoKey->getYAxis(),
+                'x' => $pianoKey->getX(),
+                'y' => $pianoKey->getY(),
                 'width' => $pianoKey->getWidth(),
                 'height' => $pianoKey->getHeight(),
                 'class' => '',
@@ -94,8 +75,8 @@ class OctaveBuilder
             ]);
 
             $textNode = new ElementNode('TEXT', [
-                'x' => $pianoKey->getXAxis() - 5,
-                'y' => $pianoKey->getYAxis() - 5,
+                'x' => $pianoKey->getX() - 5,
+                'y' => $pianoKey->getY() - 5,
                 'fill' => $pianoKey->getFill(),
                 'class' => '',
                 'data-svg' => 'text-white'

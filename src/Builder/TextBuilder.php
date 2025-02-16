@@ -2,19 +2,18 @@
 
 namespace Ucscode\PhpSvgPiano\Builder;
 
-use Ucscode\PhpSvgPiano\Traits\AxisTrait;
+use Ucscode\PhpSvgPiano\Traits\CoordinateTrait;
 use Ucscode\PhpSvgPiano\Traits\ColorTrait;
-use Ucscode\UssElement\Enums\NodeNameEnum;
 use Ucscode\UssElement\Node\ElementNode;
 
 class TextBuilder
 {
-    use AxisTrait;
+    use CoordinateTrait;
     use ColorTrait;
 
     protected int $fontSize = 10;
     protected string $fontFamily = 'garamond';
-    protected ?string $label = null;
+    protected ?string $label = '';
     protected string $text;
 
     public function __construct(?string $text)
@@ -30,8 +29,8 @@ class TextBuilder
     public function getElement(): ElementNode
     {
         $node = new ElementNode('text', [
-            'x' => $this->xAxis ?? 0,
-            'y' => $this->yAxis + $this->fontSize,
+            'x' => $this->x ?? 0,
+            'y' => $this->y + $this->fontSize,
             'fill' => $this->getFill() ?? '#00000',
             'font-size' => sprintf('%spx', $this->fontSize),
             'font-family' => $this->fontFamily,

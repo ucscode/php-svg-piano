@@ -4,6 +4,7 @@ namespace Ucscode\PhpSvgPiano\Builder;
 
 use Ucscode\PhpSvgPiano\Configuration;
 use Ucscode\PhpSvgPiano\Notation\NoteParser;
+use Ucscode\PhpSvgPiano\Notation\Octave;
 use Ucscode\PhpSvgPiano\Notation\PianoKey;
 use Ucscode\PhpSvgPiano\Notation\Pitch;
 use Ucscode\UssElement\Enums\NodeNameEnum;
@@ -18,11 +19,13 @@ class PianoBuilder
     protected int $maxOctave = 1;
 
     /**
-     * @var array<int,array{octave:int,natural:PianoKey[],accidental:PianoKey[]}>
+     * @var Octave[]
      */
-    protected array $keys = [];
+    protected array $octaves = [];
 
     /**
+     * Notes inputed by user
+     *
      * @var Pitch[]
      */
     protected array $inputPitches = [];
@@ -37,7 +40,7 @@ class PianoBuilder
 
     protected function parseAndPressNotes(string $notes): void
     {
-        $this->inputPitches = (new NoteParser())->parse($notes);
+        $this->inputPitches = (new NoteParser())->parseAll($notes);
 
         $octaves = array_map(fn (Pitch $pitch) => $pitch->getOctave(), $this->inputPitches);
 
@@ -47,35 +50,49 @@ class PianoBuilder
 
     protected function generateKeys(): void
     {
-        foreach (range($this->minOctave, $this->maxOctave) as $octave) {
-            $group = [
-                'octave' => $octave,
-                'natural' => [],
-                'accidental' => []
-            ];
+        /**
+         * @var int $octaveNumber
+         */
+        foreach (range($this->minOctave, $this->maxOctave) as $octaveNumber) {
+            $naturalKeys = [];
+            $accidentalKeys = [];
 
             foreach (Pitch::NOTES as $note) {
                 // Create white key
-                $whiteKey = new PianoKey(new Pitch($note, null, $octave));
-                $group['natural'][] = $this->pressPianoKey($whiteKey);
+                $whiteKey = new PianoKey(new Pitch($note, null, $octaveNumber));
+                $naturalKeys[] = $this->configurePianoKey($whiteKey);
 
                 // Add black keys for accidentals
                 if ($note !== 'E' && $note !== 'B') {
-                    $blackKey = new PianoKey(new Pitch($note, Pitch::ACCIDENTAL_SHARP, $octave));
-                    $group['accidental'][] = $this->pressPianoKey($blackKey);
+                    $blackKey = new PianoKey(new Pitch($note, Pitch::ACCIDENTAL_SHARP, $octaveNumber));
+                    $accidentalKeys[] = $this->configurePianoKey($blackKey);
                 }
             }
 
-            $this->keys[] = $group;
+            $this->octaves[] = new Octave($octaveNumber, $naturalKeys, $accidentalKeys);
         }
     }
 
-    protected function pressPianoKey(PianoKey $pianoKey): PianoKey
+    protected function configurePianoKey(PianoKey $pianoKey): PianoKey
     {
+        $pattern = $pianoKey->isAccidental() ?
+            $this->configuration->getAccidentalKeyPattern() :
+            $this->configuration->getNaturalKeyPattern()
+        ;
+
+        $pianoKey
+            ->setWidth($pattern->getWidth())
+            ->setHeight($pattern->getHeight())
+            ->setX($pattern->getX())
+            ->setY($pattern->getY())
+            ->setStroke($pattern->getStroke())
+            ->setFill($pattern->getFill())
+        ;
+
         foreach ($this->inputPitches as $pitch) {
             $isPressed = in_array($pianoKey->getPitch()->getIdentifier(), [
                 $pitch->getIdentifier(),
-                $pitch->getEnharmonicEquivalence(),
+                $pitch->getEnharmonicEquivalence()->getIdentifier(),
             ], true);
 
             !$isPressed ?: $pianoKey->setPressed(true);
@@ -99,55 +116,14 @@ class PianoBuilder
 
         $svgElement->appendChild($title->getElement());
 
-        foreach ($this->keys as $octaveComponent) {
-            $octaveBuilder = new OctaveBuilder($octaveComponent, $this->configuration);
-            var_dump($octaveBuilder->getElement()->render(0));
+        foreach ($this->octaves as $key => $octave) {
+            $octaveBuilder = new OctaveBuilder($octave, $key);
+            $svgElement->appendChild($octaveBuilder->getElement());
         }
 
-        $svg = '<svg width="1500" height="200" xmlns="http://www.w3.org/2000/svg">';
-        $x = 0;
+        $svgElement->appendChild($watermark->getElement());
 
-        foreach ($this->keys as $group) {
-            foreach ($group['natural'] as $key) {
-                $color = $key->getColor() ?? $this->configuration->getNaturalKeyColor();
-                $border = $key->getBorderColor() ?? $this->configuration->getNaturalKeyBorderColor();
-                $width = $key->getWidth() ?? ($key->isAccidental() ? $this->configuration->getAccidentalKeyWidth() : $this->configuration->getNaturalKeyWidth());
-                $height = $key->getHeight() ?? ($key->isAccidental() ? $this->configuration->getAccidentalKeyHeight() : $this->configuration->getNaturalKeyHeight());
-
-                $svg .= sprintf(
-                    '<rect x="%d" y="0" width="%d" height="%d" fill="%s" stroke="%s" stroke-width="1"/>',
-                    $x,
-                    $width,
-                    $height,
-                    $color,
-                    $border
-                );
-
-                $x += 22;
-            }
-
-            $x = 0;
-            foreach ($group['black'] as $key) {
-                $color = $key->getColor();
-                $border = $key->getBorderColor();
-                $width = $key->getWidth() ?? ($key->isAccidental() ? $this->configuration->getAccidentalKeyWidth() : $this->configuration->getNaturalKeyWidth());
-                $height = $key->getHeight() ?? ($key->isAccidental() ? $this->configuration->getAccidentalKeyHeight() : $this->configuration->getNaturalKeyHeight());
-
-                $svg .= sprintf(
-                    '<rect x="%d" y="0" width="%d" height="%d" fill="%s" stroke="%s" stroke-width="1"/>',
-                    $x + 15,
-                    $width,
-                    $height,
-                    $color,
-                    $border
-                );
-
-                $x += 22;
-            }
-        }
-
-        $svg .= '</svg>';
-        return $svg;
+        return $svgElement->render(0);
     }
 
     protected function getPianoWidth(): int

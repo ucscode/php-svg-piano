@@ -4,8 +4,8 @@ namespace Ucscode\PhpSvgPiano\Traits;
 
 trait ColorTrait
 {
-    protected ?string $fill = null;
     protected ?string $stroke = null;
+    protected ?string $fill = null;
 
     public function getFill(): ?string
     {

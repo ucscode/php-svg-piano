@@ -2,138 +2,77 @@
 
 namespace Ucscode\PhpSvgPiano;
 
+use Ucscode\PhpSvgPiano\Pattern\Pattern;
+use Ucscode\PhpSvgPiano\Pattern\TextPattern;
+
 class Configuration
 {
-    protected string $naturalKeyColor = '#fff';
-    protected int $naturalKeyWidth = 100;
-    protected int $naturalKeyHeight = 250;
-    protected string $naturalKeyBorderColor = '#000';
-    protected string $accidentalKeyColor = '#0c0c0c';
-    protected int $accidentalKeyWidth = 80;
-    protected int $accidentalKeyHeight = 200;
-    protected string $accidentalKeyBorderColor = '#000';
-    protected string $watermarkText = '';
-    protected string $fontFamily = 'Arial';
-    protected int $fontSize = 12;
-    protected string $fontColor = '#000';
+    public const NATURAL_KEY_STROKE = '#353535ff';
+    public const NATURAL_KEY_FILL = '#f9f9f9ff';
+    public const ACCIDENTAL_KEY_STROKE = '#272727ff';
+    public const ACCIDENTAL_KEY_FILL = '#1a1a1aff';
 
-    public function getNaturalKeyColor(): string
+    // [naturalKeyPattern.width] * 7 = [1 octave]
+    // [naturalKeyPattern.height] = [piano.height]ssssss
+
+    protected Pattern $naturalKeyPattern;
+    protected Pattern $accidentalKeyPattern;
+    protected TextPattern $titlePattern;
+    protected TextPattern $watermarkPattern;
+
+    public function __construct()
     {
-        return $this->naturalKeyColor;
+        $this->naturalKeyPattern = new Pattern(30, 90, self::NATURAL_KEY_STROKE, self::NATURAL_KEY_FILL);
+        $this->accidentalKeyPattern = new Pattern(25, 55, self::ACCIDENTAL_KEY_STROKE, self::ACCIDENTAL_KEY_FILL);
+        $this->titlePattern = (new TextPattern())->setFontSize(34);
+        $this->watermarkPattern = new TextPattern();
     }
 
-    public function setNaturalKeyColor(string $color): void
+    public function setNaturalKeyPattern(Pattern $pattern): static
     {
-        $this->naturalKeyColor = $color;
+        $this->naturalKeyPattern = $pattern;
+
+        return $this;
     }
 
-    public function getNaturalKeyWidth(): int
+    public function getNaturalKeyPattern(): Pattern
     {
-        return $this->naturalKeyWidth;
+        return $this->naturalKeyPattern;
     }
 
-    public function setNaturalKeyWidth(int $width): void
+    public function setAccidentalKeyPattern(Pattern $pattern): static
     {
-        $this->naturalKeyWidth = $width;
+        $this->accidentalKeyPattern = $pattern;
+
+        return $this;
     }
 
-    public function getNaturalKeyHeight(): int
+    public function getAccidentalKeyPattern(): Pattern
     {
-        return $this->naturalKeyHeight;
+        return $this->accidentalKeyPattern;
     }
 
-    public function setNaturalKeyHeight(int $height): void
+    public function setWatermarkPattern(TextPattern $pattern): static
     {
-        $this->naturalKeyHeight = $height;
+        $this->watermarkPattern = $pattern;
+
+        return $this;
     }
 
-    public function getNaturalKeyBorderColor(): string
+    public function getWatermarkPattern(): TextPattern
     {
-        return $this->naturalKeyBorderColor;
+        return $this->watermarkPattern;
     }
 
-    public function setNaturalKeyBorderColor(string $color): void
+    public function setTitlePattern(TextPattern $pattern): static
     {
-        $this->naturalKeyBorderColor = $color;
+        $this->titlePattern = $pattern;
+
+        return $this;
     }
 
-    public function getAccidentalKeyColor(): string
+    public function getTitlePattern(): TextPattern
     {
-        return $this->accidentalKeyColor;
-    }
-
-    public function setAccidentalKeyColor(string $color): void
-    {
-        $this->accidentalKeyColor = $color;
-    }
-
-    public function getAccidentalKeyWidth(): int
-    {
-        return $this->accidentalKeyWidth;
-    }
-
-    public function setAccidentalKeyWidth(int $width): void
-    {
-        $this->accidentalKeyWidth = $width;
-    }
-
-    public function getAccidentalKeyHeight(): int
-    {
-        return $this->accidentalKeyHeight;
-    }
-
-    public function setAccidentalKeyHeight(int $height): void
-    {
-        $this->accidentalKeyHeight = $height;
-    }
-
-    public function getAccidentalKeyBorderColor(): string
-    {
-        return $this->accidentalKeyBorderColor;
-    }
-
-    public function setAccidentalKeyBorderColor(string $color): void
-    {
-        $this->accidentalKeyBorderColor = $color;
-    }
-
-    public function getWatermarkText(): string
-    {
-        return $this->watermarkText;
-    }
-
-    public function setWatermarkText(string $text): void
-    {
-        $this->watermarkText = $text;
-    }
-
-    public function getFontFamily(): string
-    {
-        return $this->fontFamily;
-    }
-
-    public function setFontFamily(string $family): void
-    {
-        $this->fontFamily = $family;
-    }
-
-    public function getFontSize(): int
-    {
-        return $this->fontSize;
-    }
-
-    public function setFontSize(int $size): void
-    {
-        $this->fontSize = $size;
-    }
-
-    public function getFontColor(): string
-    {
-        return $this->fontColor;
-    }
-
-    public function setFontColor(string $color): void
-    {
-        $this->fontColor = $color;
+        return $this->titlePattern;
     }
 }
