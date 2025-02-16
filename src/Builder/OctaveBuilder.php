@@ -21,10 +21,12 @@ class OctaveBuilder
         $this->svgGroup = new ElementNode('G', ['data-piano' => '']); // groups all octave
 
         foreach ($this->octaves as $octave) {
-            $octaveGroup = new ElementNode('G', ['data-octave' => $octave->getIndex()]); // groups an octave
-            $octaveGroup->appendChild($this->processPianoKeys($octave->getNaturalKeys()));
-            // $octaveGroup->appendChild($this->processPianoKeys($octave->getAccidentalKeys()));
-            $this->svgGroup->appendChild($octaveGroup);
+            $groupElement = $octave
+                ->setX(0)
+                ->arrangePianoKeys()
+                ->createGroupElement()
+            ;
+            $this->svgGroup->appendChild($groupElement);
         }
     }
 
@@ -36,44 +38,5 @@ class OctaveBuilder
     /**
      * @param PianoKeys[] $pianoKeys
      */
-    protected function processPianoKeys(array $pianoKeys): ElementNode
-    {
-        $pianoKeyGroup = new ElementNode('G', ['data-notes' => 'natural']); // groups natural|accidental keys
 
-        foreach ($pianoKeys as $pianoKey) {
-            if ($this->lastNaturalKey) {
-                $pianoKey->setX($this->lastNaturalKey->getRight());
-            }
-
-            $svgRectNode = new ElementNode('RECT', [
-                'fill' => $pianoKey->getFill(),
-                'stroke' => $pianoKey->getStroke(),
-                'x' => $pianoKey->getX(),
-                'y' => $pianoKey->getY(),
-                'width' => $pianoKey->getWidth(),
-                'height' => $pianoKey->getHeight(),
-                'stroke-width' => $pianoKey->getStrokeWidth(),
-                'class' => '',
-                'data-label' => 'key-white'
-            ]);
-
-            $svgTextNode = new ElementNode('TEXT', [
-                'x' => $pianoKey->getX() - 5,
-                'y' => $pianoKey->getY() - 5,
-                'fill' => $pianoKey->getFill(),
-                'class' => '',
-                'data-svg' => 'text-white'
-            ]);
-
-            $textNode = new TextNode($pianoKey->getPitch()->getIdentifier());
-
-            $svgTextNode->appendChild($textNode);
-            $svgRectNode->appendChild($svgTextNode);
-            $pianoKeyGroup->appendChild($svgRectNode);
-
-            $this->lastNaturalKey = $pianoKey;
-        }
-
-        return $pianoKeyGroup;
-    }
 }

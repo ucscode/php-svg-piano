@@ -4,29 +4,29 @@ namespace Ucscode\PhpSvgPiano\Traits;
 
 trait CoordinateTrait
 {
-    protected int $x = 0;
-    protected int $y = 0;
+    protected float $x = 0;
+    protected float $y = 0;
 
-    public function getX(): int
+    public function getX(): float
     {
         return $this->x;
     }
 
-    public function setX(int $xAxis): static
+    public function setX(float $x): static
     {
-        $this->x = $xAxis;
+        $this->x = $x;
 
         return $this;
     }
 
-    public function getY(): int
+    public function getY(): float
     {
         return $this->y;
     }
 
-    public function setY(int $yAxis): static
+    public function setY(float $y): static
     {
-        $this->y = $yAxis;
+        $this->y = $y;
 
         return $this;
     }
