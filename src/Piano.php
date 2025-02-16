@@ -19,8 +19,16 @@ class Piano
         return $this->configuration;
     }
 
-    public function render(?string $notes = null, ?Option $options = null): string
+    public function render(?string $notes = null, null|string|Option|array $option = null): string
     {
-        return (new PianoBuilder($this->configuration, $notes, $options ?? new Option()))->render();
+        if (!$option instanceof Option) {
+            if (is_string($option)) {
+                $option = ['title' => $option];
+            }
+
+            $option = new Option($option ??= []);
+        }
+
+        return (new PianoBuilder($this->configuration, $notes, $option))->render();
     }
 }

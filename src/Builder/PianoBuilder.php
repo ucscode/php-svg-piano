@@ -43,17 +43,14 @@ class PianoBuilder
 
     public function render(): string
     {
-        $title = new TextBuilder(
-            $this->options->get('title') ?? 'Cmaj7',
+        $title = (new TextBuilder(
+            $this->options->get('title'),
             $this->options->get('titleAttributes')
-        );
-
-        $title->setSpaceBottom(10);
-
-        $watermark = new TextBuilder(
-            $this->options->get('watermark') ?? '',
-            $this->options->get('watermarkAttributes')
-        );
+        ))
+            ->setSpaceBottom(10)
+            ->setFontSize($this->configuration->getTitlePattern()->getFontSize())
+            ->setFontFamily($this->configuration->getTitlePattern()->getFontFamily())
+        ;
 
         $svgElement = new ElementNode(NodeNameEnum::NODE_SVG, [
             'version' => '1.1',
@@ -62,14 +59,13 @@ class PianoBuilder
             'viewBox' => sprintf(
                 '0 0 %s %s',
                 $this->getPianoWidth(),
-                $this->getPianoHeight() + $title->getOuterHeight() + $watermark->getOuterHeight()
+                $this->getPianoHeight() + $title->getOuterHeight(),
             ),
             'data-psvgp' => '{$this->svgname}',
         ]);
 
         $svgElement->appendChild($title->getElement());
-        $svgElement->appendChild($this->buildOctaveElement(0, $title->getOuterHeight()));
-        $svgElement->appendChild($watermark->getElement());
+        $svgElement->appendChild($this->buildPianoElement(0, $title->getOuterHeight()));
 
         return $svgElement->render(0);
     }
@@ -151,7 +147,7 @@ class PianoBuilder
         return $keyPattern->getHeight();
     }
 
-    protected function buildOctaveElement(float $initialX = 0, float $initialY = 0): ElementNode
+    protected function buildPianoElement(float $initialX = 0, float $initialY = 0): ElementNode
     {
         $elementGroup = new ElementNode('G', ['data-piano' => '']); // groups all octave
         $diagramGroup = new ElementNode('G', ['data-diagram' => '']);

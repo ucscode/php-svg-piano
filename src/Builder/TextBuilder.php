@@ -15,15 +15,25 @@ class TextBuilder
     use StyleTrait;
     use SpacingTrait;
 
-    protected int $fontSize = 10;
+    protected int $fontSize = 15;
     protected string $fontFamily = 'garamond';
     protected string $text;
     protected Attributes $attributes;
 
-    public function __construct(?string $text, ?Attributes $attributes = null)
+    public function __construct(?string $text, null|Attributes|array $attributes = null)
     {
         $this->text = $text ?? '';
-        $this->attributes = $attributes ?? new Attributes();
+
+        if (!$attributes instanceof Attributes) {
+            $attributes = new Attributes($attributes ?? []);
+        }
+
+        $this->attributes = $attributes;
+    }
+
+    public function getText(): ?string
+    {
+        return $this->text;
     }
 
     public function render(): string
@@ -35,7 +45,7 @@ class TextBuilder
     {
         $textAttributes = [
             'x' => $this->getSpaceLeft() + $this->getX(),
-            'y' => $this->getSpaceTop() + $this->getY(),
+            'y' => $this->getSpaceTop() + $this->getY() + $this->getFontSize(),
             'fill' => $this->getFill() ?? '#00000',
             'font-size' => sprintf('%spx', $this->fontSize),
             'font-family' => $this->fontFamily,
@@ -76,6 +86,6 @@ class TextBuilder
 
     public function getOuterHeight(): float
     {
-        return $this->getSpaceY() + $this->fontSize;
+        return empty($this->text) ? 0 : ($this->getSpaceY() + $this->fontSize);
     }
 }

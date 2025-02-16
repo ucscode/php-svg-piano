@@ -15,11 +15,10 @@ class Configuration
     protected RenderPattern $naturalKeyPattern;
     protected RenderPattern $accidentalKeyPattern;
     protected TextPattern $titlePattern;
-    protected TextPattern $watermarkPattern;
     protected AccidentalTypeEnum $defaultAccidentalType;
     protected int $octaveStartPoint = 4;
     protected int $octaveEndPoint = 4;
-    protected bool $showReleasedKeyText = true;
+    protected bool $showReleasedKeyText = false;
     protected bool $showPressedKeyText = true;
 
     public function __construct()
@@ -38,8 +37,7 @@ class Configuration
             ->setPressedTextPattern(new TextPattern(0, 0, '', '#f9f9f9ff'))
         ;
 
-        $this->titlePattern = (new TextPattern())->setFontSize(34);
-        $this->watermarkPattern = new TextPattern();
+        $this->titlePattern = (new TextPattern())->setFontSize(16);
         $this->defaultAccidentalType = AccidentalTypeEnum::TYPE_SHARP;
     }
 
@@ -65,18 +63,6 @@ class Configuration
     public function getAccidentalKeyPattern(): RenderPattern
     {
         return $this->accidentalKeyPattern;
-    }
-
-    public function setWatermarkPattern(TextPattern $pattern): static
-    {
-        $this->watermarkPattern = $pattern;
-
-        return $this;
-    }
-
-    public function getWatermarkPattern(): TextPattern
-    {
-        return $this->watermarkPattern;
     }
 
     public function setTitlePattern(TextPattern $pattern): static
