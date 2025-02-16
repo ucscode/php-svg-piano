@@ -3,13 +3,13 @@
 namespace Ucscode\PhpSvgPiano\Builder;
 
 use Ucscode\PhpSvgPiano\Traits\CoordinateTrait;
-use Ucscode\PhpSvgPiano\Traits\ColorTrait;
+use Ucscode\PhpSvgPiano\Traits\StyleTrait;
 use Ucscode\UssElement\Node\ElementNode;
 
 class TextBuilder
 {
     use CoordinateTrait;
-    use ColorTrait;
+    use StyleTrait;
 
     protected int $fontSize = 10;
     protected string $fontFamily = 'garamond';

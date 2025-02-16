@@ -36,7 +36,7 @@ class Octave
      */
     public function getAccidentalKeys(): array
     {
-        return $this->naturalKeys;
+        return $this->accidentalKeys;
     }
 
     protected function validateKeys(array $pianoKeys, string $name, int $limit): array

@@ -87,6 +87,7 @@ class PianoBuilder
             ->setY($pattern->getY())
             ->setStroke($pattern->getStroke())
             ->setFill($pattern->getFill())
+            ->setStrokeWidth($pattern->getStrokeWidth())
         ;
 
         foreach ($this->inputPitches as $pitch) {
@@ -115,12 +116,7 @@ class PianoBuilder
         ]);
 
         $svgElement->appendChild($title->getElement());
-
-        foreach ($this->octaves as $key => $octave) {
-            $octaveBuilder = new OctaveBuilder($octave, $key);
-            $svgElement->appendChild($octaveBuilder->getElement());
-        }
-
+        $svgElement->appendChild((new OctaveBuilder($this->octaves))->getElement());
         $svgElement->appendChild($watermark->getElement());
 
         return $svgElement->render(0);
@@ -128,11 +124,11 @@ class PianoBuilder
 
     protected function getPianoWidth(): int
     {
-        return 300;
+        return $this->configuration->getNaturalKeyPattern()->getWidth() * count(Pitch::NOTES) * count($this->octaves);
     }
 
     protected function getPianoHeight(): int
     {
-        return 500;
+        return $this->configuration->getNaturalKeyPattern()->getHeight();
     }
 }

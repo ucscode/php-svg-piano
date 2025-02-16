@@ -2,10 +2,11 @@
 
 namespace Ucscode\PhpSvgPiano\Traits;
 
-trait ColorTrait
+trait StyleTrait
 {
     protected ?string $stroke = null;
     protected ?string $fill = null;
+    protected int $strokeWidth = 1;
 
     public function getFill(): ?string
     {
@@ -27,6 +28,18 @@ trait ColorTrait
     public function setStroke(?string $stroke): static
     {
         $this->stroke = $stroke;
+
+        return $this;
+    }
+
+    public function getStrokeWidth(): ?string
+    {
+        return $this->strokeWidth;
+    }
+
+    public function setStrokeWidth(int $width): static
+    {
+        $this->strokeWidth = $width;
 
         return $this;
     }

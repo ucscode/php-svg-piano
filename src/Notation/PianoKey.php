@@ -3,15 +3,17 @@
 namespace Ucscode\PhpSvgPiano\Notation;
 
 use Ucscode\PhpSvgPiano\Configuration;
+use Ucscode\PhpSvgPiano\Traits\AxisMethodsTrait;
 use Ucscode\PhpSvgPiano\Traits\CoordinateTrait;
-use Ucscode\PhpSvgPiano\Traits\ColorTrait;
+use Ucscode\PhpSvgPiano\Traits\StyleTrait;
 use Ucscode\PhpSvgPiano\Traits\DimensionTrait;
 
 class PianoKey
 {
     use DimensionTrait;
     use CoordinateTrait;
-    use ColorTrait;
+    use StyleTrait;
+    use AxisMethodsTrait;
 
     public const TYPE_NATURAL = 0;
     public const TYPE_ACCIDENTAL = 1;

@@ -3,45 +3,61 @@
 namespace Ucscode\PhpSvgPiano\Builder;
 
 use Ucscode\PhpSvgPiano\Notation\Octave;
+use Ucscode\PhpSvgPiano\Notation\PianoKey;
 use Ucscode\UssElement\Node\ElementNode;
+use Ucscode\UssElement\Node\TextNode;
 
 class OctaveBuilder
 {
-    protected Octave $octave;
-    protected ElementNode $octaveSvgGroup;
+    protected ElementNode $svgGroup;
+    protected ?PianoKey $lastNaturalKey = null;
+    protected ?PianoKey $lastAccidentalKey = null;
 
-    public function __construct(Octave $octave, protected int $index)
+    /**
+     * @param Octave[] $octaves
+     */
+    public function __construct(protected array $octaves)
     {
-        $this->octave = $octave;
-        $this->octaveSvgGroup = new ElementNode('G');
-        $this->buildNaturalOctaveKeys();
-        $this->buildAccidentalOctaveKeys();
+        $this->svgGroup = new ElementNode('G'); // groups all octave
+
+        foreach ($this->octaves as $octave) {
+            $octaveGroup = new ElementNode('G'); // groups an octave
+            $octaveGroup->appendChild($this->processPianoKeys($octave->getNaturalKeys()));
+            // $octaveGroup->appendChild($this->processPianoKeys($octave->getAccidentalKeys()));
+            $this->svgGroup->appendChild($octaveGroup);
+        }
     }
 
     public function getElement(): ElementNode
     {
-        return $this->octaveSvgGroup;
+        return $this->svgGroup;
     }
 
-    protected function buildNaturalOctaveKeys(): void
+    /**
+     * @param PianoKeys[] $pianoKeys
+     */
+    protected function processPianoKeys(array $pianoKeys): ElementNode
     {
-        $group = new ElementNode('G');
+        $pianoKeyGroup = new ElementNode('G'); // groups natural|accidental keys
 
-        foreach ($this->octave->getNaturalKeys() as $pianoKey) {
-            // set X axis of white key
+        foreach ($pianoKeys as $pianoKey) {
+            if ($this->lastNaturalKey) {
+                $pianoKey->setX($this->lastNaturalKey->getRight());
+            }
 
-            $rectNode = new ElementNode('RECT', [
+            $svgRectNode = new ElementNode('RECT', [
                 'fill' => $pianoKey->getFill(),
                 'stroke' => $pianoKey->getStroke(),
                 'x' => $pianoKey->getX(),
                 'y' => $pianoKey->getY(),
                 'width' => $pianoKey->getWidth(),
                 'height' => $pianoKey->getHeight(),
+                'stroke-width' => $pianoKey->getStrokeWidth(),
                 'class' => '',
                 'data-label' => 'key-white'
             ]);
 
-            $textNode = new ElementNode('TEXT', [
+            $svgTextNode = new ElementNode('TEXT', [
                 'x' => $pianoKey->getX() - 5,
                 'y' => $pianoKey->getY() - 5,
                 'fill' => $pianoKey->getFill(),
@@ -49,44 +65,15 @@ class OctaveBuilder
                 'data-svg' => 'text-white'
             ]);
 
-            $textNode->setInnerHtml($pianoKey->getPitch()->getIdentifier());
-            $rectNode->appendChild($textNode);
-            $group->appendChild($rectNode);
+            $textNode = new TextNode($pianoKey->getPitch()->getIdentifier());
+
+            $svgTextNode->appendChild($textNode);
+            $svgRectNode->appendChild($svgTextNode);
+            $pianoKeyGroup->appendChild($svgRectNode);
+
+            $this->lastNaturalKey = $pianoKey;
         }
 
-        $this->octaveSvgGroup->appendChild($group);
-    }
-
-    protected function buildAccidentalOctaveKeys(): void
-    {
-        $group = new ElementNode('G');
-
-        foreach ($this->octave->getAccidentalKeys() as $pianoKey) {
-            // set X axis of white key
-            $rectNode = new ElementNode('RECT', [
-                'fill' => $pianoKey->getFill(),
-                'stroke' => $pianoKey->getStroke(),
-                'x' => $pianoKey->getX(),
-                'y' => $pianoKey->getY(),
-                'width' => $pianoKey->getWidth(),
-                'height' => $pianoKey->getHeight(),
-                'class' => '',
-                'data-label' => 'key-white'
-            ]);
-
-            $textNode = new ElementNode('TEXT', [
-                'x' => $pianoKey->getX() - 5,
-                'y' => $pianoKey->getY() - 5,
-                'fill' => $pianoKey->getFill(),
-                'class' => '',
-                'data-svg' => 'text-white'
-            ]);
-
-            $textNode->setInnerHtml($pianoKey->getPitch()->getIdentifier());
-            $rectNode->appendChild($textNode);
-            $group->appendChild($rectNode);
-        }
-
-        $this->octaveSvgGroup->appendChild($group);
+        return $pianoKeyGroup;
     }
 }
