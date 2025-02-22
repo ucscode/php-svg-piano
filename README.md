@@ -1,192 +1,112 @@
-# php-svg-piano
-Render SVG Piano graphics on web browser directly from PHP
-
-![Screenshot](https://i.imgur.com/SoccqnB.png)
-
-PHPSVGPiano makes it possible for you to draw piano keys and chords directly into your browser as svg. No Javascript Required.
-
-Since the file being rendered is in ```<svg/>``` format, you can easily change the style using HTML or make some animation using Javascript. The choices are yours!
-
-## HOW TO USE
-
-```php
-
-// get the class file
-
-require_once "PHPSVGPiano.php";
-
-//create a piano instance
-
-$piano = new PHPSVGPiano();
-
-//render an svg piano into the browser;
-
-$piano->draw();
-
-```
-
-![Draw Piano](https://i.imgur.com/1Xn0FIX.png)
-
-### PRESSING KEYS
-
-PHPSVGPiano ```draw()``` method accepts comma separated musical notes as it's first parameter
-
-```php
-
-$C_Major = "C, E, G";
-
-$piano->draw( $C_Major );
-
-```
-
-In PHPSVGPiano;
-
-```Sharp``` is represented with a plus ``` + ``` sign
-
-```Flat``` is represented with a minus ```-``` sign. 
-
----
-
-So if you need to write a note like ```C#```, you would write ```C+``` instead.
-
-And when you need to write ```Cb```, you'd write ```C-``` instead.
-
-### Example:
-
-```php
-
-// Cmin#5 - C, Eb, G#
-
-$C_Minor_Aug = "C, E-, G+";
-
-$piano->draw( $C_Minor_Aug );
-
-```
-
-![Sample](https://i.imgur.com/lpwYvla.png)
-
----
-
-### Piano Octaves
-
-You can extend the piano octave by specifying how many octave should be rendered before calling the ```draw()``` method.
-
-```php
-
-// extend the piano to 2 octaves;
-
-$piano->octaves = 2;
-
-$piano->draw();
-
-```
-
-However, you can also specify the octave of a single note. 
-
-*This will automatically increase the piano octave if the octave specified is higher than the default.*
-
-To specify a note octave, append a number to the note. For Example, ```C``` or ```C4``` represents the ```middle C``` & ```C5``` is an octave higher.
-
-*The default octave for any natural note is 4*
-
-### Example:
-
-```php
-
-// C Minor add9 = 1 - b3 - 5 - 9
-
-$CmAdd9 = "C, E-, G, D5";
-
-$piano->draw( $CmAdd9 );
-
-```
-
-![C Minor Add9](https://i.imgur.com/Uz8skvx.png)
-
-```php
-
-// Let's try a different chord
-// Minor7 = 1, b3, 5, b7;
-
-$Bbmin7 = "B-, D-5, E5, A-5"; // B-Flat;
-
-$piano->draw( $Bbmin7 );
-
-```
-
-![Imgur](https://i.imgur.com/rYRoVMV.png)
-
----
-
-### ADDING TITLE
-
-You can display a title with the piano diagram by passing a string to the second parameter of ```draw()``` method;
-
-```php
-
-$piano->draw( "C, E-, G, B-", "C Minor 7" );
-
-```
-
-![Screenshot](https://i.imgur.com/SoccqnB.png)
-
----
-
-### Predefined Properties
-
-You can set the width of the piano octave and the height of the piano
-
-```php
-
-$piano->octave_width = 300;
-$piano->piano_height = 60;
-$piano->draw();
-
-```
-
-![Piano Resized](https://i.imgur.com/Kw0LDAS.png)
-
----
-
-### GETTING SVG AS STRING
-
-You can return the svg result as string if you don't want to print the svg directly to the browser.
-
-This can be achieved by passing a ```boolean``` value ```false``` to the 3rd parameter of ```draw()``` method
-
-```php
-
-$piano_svg = $piano->draw( null, null, false );
-
-echo $piano_svg;
-
-```
-
-### Finally
-
-You can pass a name to the constructor method to classify all svg of that piano instance
-
-```php
-
-$piano = new piano( "foo" );
-
-$piano->draw( "E, G+, A", "E Sus2" );
-
-```
-
-Now the svg element will contain an attribute ```data-psvgp='foo'```
-
----
-
-*That's it! Thanks for stopping by!*
-
-*The idea of this project was inspired by [SVGuitar](https://github.com/omnibrain/svguitar)*
-
-*Though they have nothing in common in terms of language, they do have something in common in terms of creating visual instrument representations*
-
-
-
-
-
-
+# PHP SVG Piano Documentation
+
+- Introduction
+- Getting Started
+- Patterns
+- Configuration
+- Pitch
+- NoteParser
+
+## 1. Introduction  
+- **Overview:**  
+  A PHP library that generates customizable SVG pianos using an object-oriented approach.  
+- **Features:**  
+  - Dynamic piano generation  
+  - Customizable key styles and interactions  
+  - Configuration-driven rendering  
+  - Pattern-based customization for key states (e.g., clicked, released)  
+  - Support for musical theory with classes like Pitch and Octave  
+- **Installation:**  
+  Provide installation instructions (via Composer, etc.)
+
+## 2. Getting Started  
+- **Quick Start Example:**  
+  - How to instantiate and render a piano  
+  - Passing in configuration and options  
+- **Basic Usage:**  
+  - Creating a basic piano with default settings
+
+## 3. Core Classes Overview  
+
+### 3.1 Piano  
+- **Description:**  
+  Main class for generating the SVG piano.  
+- **Key Methods:**  
+  - `render(Configuration $config, Option $option)` – generates the SVG based on provided configurations and options.
+
+### 3.2 PianoKey  
+- **Description:**  
+  Represents individual keys on the piano.  
+- **Key Properties/Methods:**  
+  - Styling attributes, status (pressed/released), and SVG generation for a key.
+
+### 3.3 Pitch  
+- **Description:**  
+  Handles musical notes, including mapping between notes and their respective frequencies or positions.  
+- **Usage:**  
+  Provides support for enharmonic equivalents.
+
+### 3.4 Octave  
+- **Description:**  
+  Represents an octave and groups a set of keys.  
+- **Usage:**  
+  Helps in organizing keys and their corresponding pitches.
+
+## 4. Additional Classes
+
+### 4.1 Configuration  
+- **Description:**  
+  Holds settings that determine how the piano is rendered.  
+- **Usage:**  
+  Passed as the first parameter to the `Piano::render` method.  
+- **Key Attributes:**  
+  - Dimensions, key spacing, styling defaults, etc.
+
+### 4.2 Option  
+- **Description:**  
+  Provides extra options (e.g., piano title, metadata) for rendering the piano.  
+- **Usage:**  
+  Passed as the second parameter to the `Piano::render` method.
+
+### 4.3 Patterns  
+- **Description:**  
+  A collection of classes that define how piano keys are rendered under various states.  
+- **Available Pattern Classes:**
+  - **KeyPattern:**  
+    Determines the basic style and shape of a key.
+  - **TextPattern:**  
+    Handles the rendering of text (e.g., note labels) on the keys.
+  - **RenderPattern:**  
+    Defines more complex rendering behaviors, such as interactive states (clicked, released).
+
+## 5. Advanced Topics  
+
+### 5.1 Customizing Rendering  
+- **How to use Configuration and Option classes:**  
+  - Examples and use-cases for custom configurations.
+- **Pattern Customization:**  
+  - Creating custom patterns by extending KeyPattern, TextPattern, or RenderPattern.
+
+### 5.2 Extending the Library  
+- **Adding new patterns or custom behaviors:**  
+  - Guidelines for subclassing and overriding default methods.
+
+## 6. API Reference  
+- Detailed method and property documentation for each class:
+  - **Piano:** Methods like `render()`, `addOctave()`, etc.
+  - **PianoKey:** Properties for key status, styling; methods for SVG generation.
+  - **Pitch:** Methods for note handling.
+  - **Octave:** Methods for grouping keys.
+  - **Configuration & Option:** List available settings.
+  - **Patterns:** Methods and properties of KeyPattern, TextPattern, RenderPattern.
+
+## 7. Contributing  
+- **Guidelines for Contribution:**  
+  - Code style guidelines, branch naming, pull request process.
+- **Contact/Support:**  
+  - How to reach out for help or report issues.
+
+## 8. License  
+- **Details:**  
+  Provide license information.
 

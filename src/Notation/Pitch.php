@@ -41,13 +41,13 @@ class Pitch
 
     protected string $note;
     protected ?string $accidental;
-    protected int $octave;
+    protected int $octaveNumber;
 
-    public function __construct(string $note, ?string $accidental = null, int $octave = 4)
+    public function __construct(string $note, ?string $accidental = null, int $octaveNumber = 4)
     {
         $this->setNote($note);
         $this->setAccidental($accidental);
-        $this->setOctave($octave);
+        $this->setOctaveNumber($octaveNumber);
         $this->harmonizeNote();
     }
 
@@ -66,9 +66,9 @@ class Pitch
         return $this->accidental;
     }
 
-    public function getOctave(): int
+    public function getOctaveNumber(): int
     {
-        return $this->octave;
+        return $this->octaveNumber;
     }
 
     public function getAccidentalSymbol(): ?string
@@ -90,19 +90,19 @@ class Pitch
 
     public function getIdentifier(): string
     {
-        return $this->getAccidentalNote() . $this->octave;
+        return $this->getAccidentalNote() . $this->octaveNumber;
     }
 
     public function getEnharmonicEquivalence(): static
     {
         if ($this->accidental === self::ACCIDENTAL_SHARP) {
             $prevNote = $this->getNextNote();
-            return new self($prevNote, self::ACCIDENTAL_FLAT, $this->octave);
+            return new self($prevNote, self::ACCIDENTAL_FLAT, $this->octaveNumber);
         }
 
         if ($this->accidental === self::ACCIDENTAL_FLAT) {
             $nextNote = $this->getPreviousNote();
-            return new self($nextNote, self::ACCIDENTAL_SHARP, $this->octave);
+            return new self($nextNote, self::ACCIDENTAL_SHARP, $this->octaveNumber);
         }
 
         return $this;
@@ -152,9 +152,9 @@ class Pitch
         return $this;
     }
 
-    protected function setOctave(int $octave): static
+    protected function setOctaveNumber(int $octave): static
     {
-        $this->octave = $octave;
+        $this->octaveNumber = $octave;
 
         return $this;
     }
@@ -170,7 +170,7 @@ class Pitch
         $substitution = self::SUBSTITUTION[$accidentalNote];
 
         $this->note = $substitution['note'];
-        $this->octave += $substitution['octave'];
+        $this->octaveNumber += $substitution['octave'];
         $this->accidental = null;
     }
 

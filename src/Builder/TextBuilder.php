@@ -2,6 +2,7 @@
 
 namespace Ucscode\PhpSvgPiano\Builder;
 
+use Ucscode\PhpSvgPiano\Pattern\TextPattern;
 use Ucscode\PhpSvgPiano\Traits\CoordinateTrait;
 use Ucscode\PhpSvgPiano\Traits\SpacingTrait;
 use Ucscode\PhpSvgPiano\Traits\StyleTrait;
@@ -20,7 +21,7 @@ class TextBuilder
     protected string $text;
     protected Attributes $attributes;
 
-    public function __construct(?string $text, null|Attributes|array $attributes = null)
+    public function __construct(?string $text, null|Attributes|array $attributes = null, ?TextPattern $pattern = null)
     {
         $this->text = $text ?? '';
 
@@ -29,6 +30,14 @@ class TextBuilder
         }
 
         $this->attributes = $attributes;
+
+        if ($pattern) {
+            $this->fill = $pattern->getFill();
+            $this->fontFamily = $pattern->getFontFamily();
+            $this->fontSize = $pattern->getFontSize();
+            $this->stroke = $pattern->getStroke();
+            $this->strokeWidth = $pattern->getStrokeWidth();
+        }
     }
 
     public function getText(): ?string
@@ -49,6 +58,8 @@ class TextBuilder
             'fill' => $this->getFill() ?? '#00000',
             'font-size' => sprintf('%spx', $this->fontSize),
             'font-family' => $this->fontFamily,
+            'stroke' => $this->stroke,
+            'stroke-width' => $this->strokeWidth,
         ] + $this->attributes->toArray();
 
         $node = new ElementNode('TEXT', $textAttributes);

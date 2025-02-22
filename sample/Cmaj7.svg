@@ -1,0 +1,48 @@
+
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 210 116" data-psvgp="{$this-&gt;svgname}" viewbox="0 0 210 116">
+	<text x="0" y="16" fill="#00000" font-size="16px" font-family="arial">
+		Cmin7
+	</text>
+	<g data-piano="">
+		<g data-diagram="">
+			<g data-octave="4">
+				<g data-notes="natural">
+					<rect fill="#d3bc5fff" stroke="#353535ff" x="0" y="26" width="30" height="90" stroke-width="1" class="piano-key"></rect>
+					<rect fill="#f9f9f9ff" stroke="#353535ff" x="30" y="26" width="30" height="90" stroke-width="1" class="piano-key"></rect>
+					<rect fill="#f9f9f9ff" stroke="#353535ff" x="60" y="26" width="30" height="90" stroke-width="1" class="piano-key"></rect>
+					<rect fill="#f9f9f9ff" stroke="#353535ff" x="90" y="26" width="30" height="90" stroke-width="1" class="piano-key"></rect>
+					<rect fill="#d3bc5fff" stroke="#353535ff" x="120" y="26" width="30" height="90" stroke-width="1" class="piano-key"></rect>
+					<rect fill="#f9f9f9ff" stroke="#353535ff" x="150" y="26" width="30" height="90" stroke-width="1" class="piano-key"></rect>
+					<rect fill="#f9f9f9ff" stroke="#353535ff" x="180" y="26" width="30" height="90" stroke-width="1" class="piano-key"></rect>
+				</g>
+				<g data-notes="accidental">
+					<rect fill="#1a1a1aff" stroke="#272727ff" x="13.333333333333" y="26" width="25" height="55" stroke-width="1" class="piano-key"></rect>
+					<rect fill="#786721ff" stroke="#272727ff" x="51.666666666667" y="26" width="25" height="55" stroke-width="1" class="piano-key"></rect>
+					<rect fill="#1a1a1aff" stroke="#272727ff" x="101.25" y="26" width="25" height="55" stroke-width="1" class="piano-key"></rect>
+					<rect fill="#1a1a1aff" stroke="#272727ff" x="137.5" y="26" width="25" height="55" stroke-width="1" class="piano-key"></rect>
+					<rect fill="#786721ff" stroke="#272727ff" x="173.75" y="26" width="25" height="55" stroke-width="1" class="piano-key"></rect>
+				</g>
+			</g>
+		</g>
+		<g data-diagram-text="">
+			<g data-octave="4">
+				<g data-text="natural">
+					<text x="9" y="106.72" fill="#353535ff" stroke="" stroke-width="1" font-size="10" font-family="arial" class="" data-svg="text-white">
+						C4
+					</text>
+					<text x="129" y="106.72" fill="#353535ff" stroke="" stroke-width="1" font-size="10" font-family="arial" class="" data-svg="text-white">
+						G4
+					</text>
+				</g>
+				<g data-text="accidental">
+					<text x="55.416666666667" y="74.52" fill="#f9f9f9ff" stroke="" stroke-width="1" font-size="10" font-family="arial" class="" data-svg="text-white">
+						E♭4
+					</text>
+					<text x="177.5" y="74.52" fill="#f9f9f9ff" stroke="" stroke-width="1" font-size="10" font-family="arial" class="" data-svg="text-white">
+						B♭4
+					</text>
+				</g>
+			</g>
+		</g>
+	</g>
+</svg>

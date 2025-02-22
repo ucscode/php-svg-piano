@@ -10,7 +10,7 @@
         }
     ],
     "require": {
-        "php": ">=7.4",
+        "php": ">=8.2",
         "ucscode/uss-element": "^3.5"
     },
     "autoload": {

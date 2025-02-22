@@ -20,6 +20,7 @@ class Configuration
     protected int $octaveEndPoint = 4;
     protected bool $showReleasedKeyText = false;
     protected bool $showPressedKeyText = true;
+    protected bool $showOctaveNumber = true;
 
     public function __construct()
     {
@@ -137,5 +138,17 @@ class Configuration
     public function getShowPressedKeyText(): bool
     {
         return $this->showPressedKeyText;
+    }
+
+    public function setShowOctaveNumber(bool $showOctaveNumber): static
+    {
+        $this->showOctaveNumber = $showOctaveNumber;
+
+        return $this;
+    }
+
+    public function getShowOctaveNumber(): bool
+    {
+        return $this->showOctaveNumber;
     }
 }

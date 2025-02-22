@@ -2,15 +2,11 @@
 
 use Ucscode\PhpSvgPiano\Piano;
 
-require '../vendor/autoload.php'; // Adjust the path as needed
+require '../vendor/autoload.php';
 
 // Create a piano object
 $piano = new Piano();
 
 // Render the piano SVG with some notes pressed
-$svgOutput = $piano->render('C E_ G B_', 'Bmin7');
-
-// Display the SVG output
-// header('Content-Type: image/svg+xml');
-
-echo $svgOutput;
+echo $piano->render('C E_ G# B_', 'Agumented 7th');
+echo $piano->render('A C5 E5', 'A minor');

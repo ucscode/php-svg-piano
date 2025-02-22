@@ -37,20 +37,21 @@ class PianoBuilder
     {
         $this->configuration = $configuration ?? new Configuration();
         $this->options = $options ?? new Option();
+        $this->minOctave = $this->configuration->getOctaveStartPoint();
+        $this->maxOctave = $this->configuration->getOctaveEndPoint();
         !$notes ?: $this->parseAndPressNotes($notes);
         $this->generateKeys();
     }
 
     public function render(): string
     {
-        $title = (new TextBuilder(
+        $title = new TextBuilder(
             $this->options->get('title'),
-            $this->options->get('titleAttributes')
-        ))
-            ->setSpaceBottom(10)
-            ->setFontSize($this->configuration->getTitlePattern()->getFontSize())
-            ->setFontFamily($this->configuration->getTitlePattern()->getFontFamily())
-        ;
+            $this->options->get('titleAttributes'),
+            $this->configuration->getTitlePattern()
+        );
+
+        $title->setSpaceBottom(10);
 
         $svgElement = new ElementNode(NodeNameEnum::NODE_SVG, [
             'version' => '1.1',
@@ -74,7 +75,10 @@ class PianoBuilder
     {
         $this->inputPitches = (new NoteParser())->parseAll($notes);
 
-        $octaves = array_map(fn (Pitch $pitch) => $pitch->getOctave(), $this->inputPitches);
+        $octaves = array_map(
+            fn (Pitch $pitch) => $pitch->getOctaveNumber(),
+            $this->inputPitches
+        );
 
         $this->minOctave = min($this->configuration->getOctaveStartPoint(), min($octaves));
         $this->maxOctave = max($this->configuration->getOctaveEndPoint(), max($octaves));
@@ -91,7 +95,7 @@ class PianoBuilder
 
             foreach (Pitch::NOTES as $note) {
                 // Create white key
-                $whiteKey = new PianoKey(new Pitch($note, null, $octaveNumber));
+                $whiteKey = new PianoKey(new Pitch($note, null, $octaveNumber), $this->configuration);
                 $naturalKeys[] = $this->configurePianoKey($whiteKey);
 
                 // Add black keys for accidentals
@@ -102,7 +106,7 @@ class PianoBuilder
                         $blackKeyPitch = $blackKeyPitch->getEnharmonicEquivalence();
                     }
 
-                    $accidentalKeys[] = $this->configurePianoKey(new PianoKey($blackKeyPitch));
+                    $accidentalKeys[] = $this->configurePianoKey(new PianoKey($blackKeyPitch, $this->configuration));
                 }
             }
 
@@ -123,7 +127,7 @@ class PianoBuilder
             // Press key
             if ($pianoKey->getPitch()->matches($pitch)) {
                 if ($pitch->getAccidental() !== $pianoKey->getPitch()->getAccidental()) {
-                    $pianoKey = new PianoKey($pianoKey->getPitch()->getEnharmonicEquivalence());
+                    $pianoKey = new PianoKey($pianoKey->getPitch()->getEnharmonicEquivalence(), $this->configuration);
                 }
 
                 $this->updateKeyPattern($pianoKey->setPressed(true), $renderPattern->getPressedKeyPattern());

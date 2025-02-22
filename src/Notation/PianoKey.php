@@ -25,22 +25,24 @@ class PianoKey
     public const TYPE_ACCIDENTAL = 1;
 
     protected Pitch $pitch;
-    protected bool $pressed;
+    protected bool $pressed = false;
     protected Attributes $attributes;
+    protected Attributes $textAttributes;
     protected TextPattern $textPattern;
+    protected Configuration $configuration;
 
-    public function __construct(Pitch $pitch, bool $pressed = false, ?Attributes $attributes = null)
+    public function __construct(Pitch $pitch, ?Configuration $configuration = null)
     {
         $this->pitch = $pitch;
-        $this->pressed = $pressed;
         $this->textPattern = new TextPattern();
-        $this->attributes = $attributes ?? new Attributes([
-            'class' => 'piano-key'
-        ]);
+        $this->attributes = new Attributes(['class' => 'piano-key']);
+        $this->textAttributes = new Attributes(['class' => 'piano-text']);
+
+        $this->configuration ??= new Configuration();
 
         $pattern = $this->isAccidental() ?
-            (new Configuration())->getAccidentalKeyPattern() :
-            (new Configuration())->getNaturalKeyPattern()
+            $configuration->getAccidentalKeyPattern() :
+            $configuration->getNaturalKeyPattern()
         ;
 
         $this->configurePianoPattern($pattern);
@@ -90,6 +92,18 @@ class PianoKey
         return $this;
     }
 
+    public function getTextAttributes(): Attributes
+    {
+        return $this->textAttributes;
+    }
+
+    public function setTextAttributes(Attributes $attributes): static
+    {
+        $this->textAttributes = $attributes;
+
+        return $this;
+    }
+
     public function setTextPattern(TextPattern $pattern): static
     {
         $this->textPattern = $pattern;
@@ -119,7 +133,12 @@ class PianoKey
 
     public function createTextElement(): ElementNode
     {
-        $spaceDiff = $this->getWidth() - $this->getTextPattern()->estimateWidth($this->getPitch()->getIdentifier());
+        $keyText = $this->configuration->getShowOctaveNumber() ?
+            $this->getPitch()->getIdentifier() :
+            $this->getPitch()->getAccidentalNote()
+        ;
+
+        $spaceDiff = $this->getWidth() - $this->getTextPattern()->estimateWidth($keyText);
         // (half space) [element width] (half space)
         $halfSpace = $spaceDiff / 2;
 
@@ -131,12 +150,10 @@ class PianoKey
             'stroke-width' => $this->getTextPattern()->getStrokeWidth(),
             'font-size' => $this->getTextPattern()->getFontSize(),
             'font-family' => $this->getTextPattern()->getFontFamily(),
-            'class' => '',
-            'data-svg' => 'text-white'
-        ];
+        ] + $this->getTextAttributes()->toArray();
 
         $svgTextNode = new ElementNode('TEXT', $textElementAttribute);
-        $svgTextNode->appendChild(new TextNode($this->getPitch()->getIdentifier()));
+        $svgTextNode->appendChild(new TextNode($keyText));
 
         return $svgTextNode;
     }
