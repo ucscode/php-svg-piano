@@ -1,10 +1,6 @@
 # PhpSvgPiano  
 
-PhpSvgPiano is a PHP library for generating SVG representations of a piano keyboard with customizable styles and note highlights.  
-
-## Introduction  
-
-PhpSvgPiano allows you to generate an SVG representation of a piano keyboard, with flexible customization options for key colors, text styles, and octave ranges. It is object-oriented, making it easy to manipulate and configure.  
+*PhpSvgPiano is a PHP library for generating SVG representations of a piano keyboard with customizable styles and note highlights.*  
 
 > PhpSvgPiano was inspired by the [Svguitar](https://github.com/omnibrain/svguitar) library and brings a similar SVG-based approach to piano visualization.
 
@@ -32,6 +28,7 @@ composer require ucscode/php-svg-piano
 use Ucscode\PhpSvgPiano\Piano;
 
 $piano = new Piano("C4 E4 G4");
+
 echo $piano->render();
 ```
 
@@ -45,30 +42,7 @@ This will generate an SVG with C4, E4, and G4 pressed.
 
 The documentation covers basic information from installation and usage to advanced configuration and customization options.  
 
-For detailed information, visit the full documentation: [Read Here](./docs/index.md).
-
----
-
-## Customization  
-
-### Customizing Key Styles  
-
-```php
-use Ucscode\PhpSvgPiano\Configuration;
-use Ucscode\PhpSvgPiano\Pattern\KeyPattern;
-use Ucscode\PhpSvgPiano\Pattern\TextPattern;
-use Ucscode\PhpSvgPiano\Piano;
-
-$config = new Configuration();
-$config->setNaturalKeyPattern(new KeyPattern(0, 0, '#ff0000', '#000000', 2)); // Red keys
-$config->setAccidentalKeyPattern(new KeyPattern(0, 0, '#000000', '#ff0000', 2)); // Black keys with red border
-$config->setShowPressedKeyText(true);
-
-$piano = new Piano("C4 D#4 G5", $config);
-echo $piano->render();
-```
-
-This will generate a piano with red natural keys, black accidentals with a red stroke, and visible text on pressed keys.  
+For detailed information, visit the [documentation page](./docs/index.md).
 
 ---
 
