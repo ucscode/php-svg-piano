@@ -103,3 +103,6 @@ When you call the `render()` method:
 
 By encapsulating the rendering process, the `Piano` class allows you to generate complex, customizable piano diagrams with minimal code.
 
+---
+
+[Back to Documentation Scheme](./index.md)

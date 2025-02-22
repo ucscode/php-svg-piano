@@ -114,3 +114,6 @@ This grouping means that **every key** of a specific type (e.g., natural or acci
 
 By defining and adjusting these patterns, you can customize the appearance of your piano at a granular level, ensuring that every element—from the shape and color of keys to the style of the text—meets your design requirements.
 
+---
+
+[Back to Documentation Scheme](./index.md)

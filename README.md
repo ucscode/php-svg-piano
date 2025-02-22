@@ -1,112 +1,91 @@
-# PHP SVG Piano Documentation
+# PhpSvgPiano  
 
-- Introduction
-- Getting Started
-- Patterns
-- Configuration
-- Pitch
-- NoteParser
+PhpSvgPiano is a PHP library for generating SVG representations of a piano keyboard with customizable styles and note highlights.  
 
-## 1. Introduction  
-- **Overview:**  
-  A PHP library that generates customizable SVG pianos using an object-oriented approach.  
-- **Features:**  
-  - Dynamic piano generation  
-  - Customizable key styles and interactions  
-  - Configuration-driven rendering  
-  - Pattern-based customization for key states (e.g., clicked, released)  
-  - Support for musical theory with classes like Pitch and Octave  
-- **Installation:**  
-  Provide installation instructions (via Composer, etc.)
+## Introduction  
 
-## 2. Getting Started  
-- **Quick Start Example:**  
-  - How to instantiate and render a piano  
-  - Passing in configuration and options  
-- **Basic Usage:**  
-  - Creating a basic piano with default settings
+PhpSvgPiano allows you to generate an SVG representation of a piano keyboard, with flexible customization options for key colors, text styles, and octave ranges. It is object-oriented, making it easy to manipulate and configure.  
 
-## 3. Core Classes Overview  
+> PhpSvgPiano was inspired by the [Svguitar](https://github.com/omnibrain/svguitar) library and brings a similar SVG-based approach to piano visualization.
 
-### 3.1 Piano  
-- **Description:**  
-  Main class for generating the SVG piano.  
-- **Key Methods:**  
-  - `render(Configuration $config, Option $option)` – generates the SVG based on provided configurations and options.
+### Features  
 
-### 3.2 PianoKey  
-- **Description:**  
-  Represents individual keys on the piano.  
-- **Key Properties/Methods:**  
-  - Styling attributes, status (pressed/released), and SVG generation for a key.
+- Generate a scalable SVG piano keyboard  
+- Highlight pressed keys  
+- Customize key colors and text styles  
+- Define octave range and accidental preferences  
+- Object-oriented and easy to extend  
 
-### 3.3 Pitch  
-- **Description:**  
-  Handles musical notes, including mapping between notes and their respective frequencies or positions.  
-- **Usage:**  
-  Provides support for enharmonic equivalents.
+## Installation  
 
-### 3.4 Octave  
-- **Description:**  
-  Represents an octave and groups a set of keys.  
-- **Usage:**  
-  Helps in organizing keys and their corresponding pitches.
+Install via Composer:  
 
-## 4. Additional Classes
+```sh
+composer require ucscode/php-svg-piano
+```
 
-### 4.1 Configuration  
-- **Description:**  
-  Holds settings that determine how the piano is rendered.  
-- **Usage:**  
-  Passed as the first parameter to the `Piano::render` method.  
-- **Key Attributes:**  
-  - Dimensions, key spacing, styling defaults, etc.
+## Usage  
 
-### 4.2 Option  
-- **Description:**  
-  Provides extra options (e.g., piano title, metadata) for rendering the piano.  
-- **Usage:**  
-  Passed as the second parameter to the `Piano::render` method.
+### Basic Example  
 
-### 4.3 Patterns  
-- **Description:**  
-  A collection of classes that define how piano keys are rendered under various states.  
-- **Available Pattern Classes:**
-  - **KeyPattern:**  
-    Determines the basic style and shape of a key.
-  - **TextPattern:**  
-    Handles the rendering of text (e.g., note labels) on the keys.
-  - **RenderPattern:**  
-    Defines more complex rendering behaviors, such as interactive states (clicked, released).
+```php
+use Ucscode\PhpSvgPiano\Piano;
 
-## 5. Advanced Topics  
+$piano = new Piano("C4 E4 G4");
+echo $piano->render();
+```
 
-### 5.1 Customizing Rendering  
-- **How to use Configuration and Option classes:**  
-  - Examples and use-cases for custom configurations.
-- **Pattern Customization:**  
-  - Creating custom patterns by extending KeyPattern, TextPattern, or RenderPattern.
+This will generate an SVG with C4, E4, and G4 pressed.  
 
-### 5.2 Extending the Library  
-- **Adding new patterns or custom behaviors:**  
-  - Guidelines for subclassing and overriding default methods.
+![CEG Chord](./docs/images/piano-cmaj.png)
 
-## 6. API Reference  
-- Detailed method and property documentation for each class:
-  - **Piano:** Methods like `render()`, `addOctave()`, etc.
-  - **PianoKey:** Properties for key status, styling; methods for SVG generation.
-  - **Pitch:** Methods for note handling.
-  - **Octave:** Methods for grouping keys.
-  - **Configuration & Option:** List available settings.
-  - **Patterns:** Methods and properties of KeyPattern, TextPattern, RenderPattern.
+---
 
-## 7. Contributing  
-- **Guidelines for Contribution:**  
-  - Code style guidelines, branch naming, pull request process.
-- **Contact/Support:**  
-  - How to reach out for help or report issues.
+## Documentation  
 
-## 8. License  
-- **Details:**  
-  Provide license information.
+The documentation covers basic information from installation and usage to advanced configuration and customization options.  
 
+For detailed information, visit the full documentation: [Read Here](./docs/index.md).
+
+---
+
+## Customization  
+
+### Customizing Key Styles  
+
+```php
+use Ucscode\PhpSvgPiano\Configuration;
+use Ucscode\PhpSvgPiano\Pattern\KeyPattern;
+use Ucscode\PhpSvgPiano\Pattern\TextPattern;
+use Ucscode\PhpSvgPiano\Piano;
+
+$config = new Configuration();
+$config->setNaturalKeyPattern(new KeyPattern(0, 0, '#ff0000', '#000000', 2)); // Red keys
+$config->setAccidentalKeyPattern(new KeyPattern(0, 0, '#000000', '#ff0000', 2)); // Black keys with red border
+$config->setShowPressedKeyText(true);
+
+$piano = new Piano("C4 D#4 G5", $config);
+echo $piano->render();
+```
+
+This will generate a piano with red natural keys, black accidentals with a red stroke, and visible text on pressed keys.  
+
+---
+
+## Contributing  
+
+Contributions are welcome. Feel free to:  
+
+- Report issues  
+- Submit feature requests  
+- Fork and improve the library  
+
+---
+
+## License  
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.  
+
+### Inspiration
+
+PhpSvgPiano was inspired by the [Svguitar](https://github.com/omnibrain/svguitar) library, which provides an SVG-based approach for rendering guitar chord diagrams. This project extends the concept to the piano, offering a flexible and object-oriented solution for generating customizable SVG piano keyboards.  

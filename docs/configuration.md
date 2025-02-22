@@ -99,3 +99,6 @@ $piano->render(); // Uses the custom configuration pattern
 
 The `Configuration` class is essential for controlling the overall look and behavior of your SVG piano. It combines individual pattern settings with higher-level display options to ensure that every aspect—from the size and color of keys to the font and visibility of text—is customizable. By using a Configuration instance, you can tailor the piano diagram to perfectly match your design preferences and application requirements.
 
+---
+
+[Back to Documentation Scheme](./index.md)

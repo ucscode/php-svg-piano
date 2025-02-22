@@ -22,3 +22,7 @@ The PHP SVG Piano Generator is a powerful, object-oriented library designed to d
 The library is designed for ease of integration and rapid development. With a few lines of code, you can set up and render a piano tailored to your specific requirements.
 
 In the following sections, we will dive into the library's core components, starting with the main `Piano` class, and then detailing the supportive classes and patterns that offer extensive customization options.
+
+---
+
+[Back to Documentation Scheme](./index.md)

@@ -66,3 +66,6 @@ The `Piano` class supports customization using the `Configuration` and `Option` 
 
 By default, `Piano` uses a standard configuration, but you can pass a custom `Configuration` instance when creating a new piano.
 
+---
+
+[Back to Documentation Scheme](./index.md)

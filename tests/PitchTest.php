@@ -15,7 +15,7 @@ class PitchTest extends TestCase
 
         $pitch1 = $noteParser->parse($note1);
         $pitch2 = $noteParser->parse($note2);
-        
+
         $this->assertSame(
             $pitch1->getEnharmonicEquivalence()->getIdentifier(),
             $pitch2->getIdentifier()

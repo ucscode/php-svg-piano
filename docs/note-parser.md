@@ -46,3 +46,6 @@ foreach ($pitches as $pitch) {
 
 This makes it convenient to work with multiple notes efficiently while ensuring they adhere to the library’s standard pitch formatting.
 
+---
+
+[Back to Documentation Scheme](./index.md)

@@ -84,3 +84,6 @@ $pitch->matches(new Pitch("A", "_", 4)); // false
 
 By using this approach, the piano library maintains clarity and avoids redundancy in note representation, making it easier to handle musical structures like scales, chords, and melodies.
 
+---
+
+[Back to Documentation Scheme](./index.md)

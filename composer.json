@@ -1,6 +1,6 @@
 {
     "name": "ucscode/php-svg-piano",
-    "description": "Create astonishing high resolution piano vector for you online music tutorial master class",
+    "description": "A PHP library for generating SVG representations of a piano keyboard with customizable styles and note highlights.",
     "license": "MIT",
     "authors": [
         {
