@@ -7,10 +7,10 @@ This section will guide you through installing and using the PHP SVG Piano Gener
 To install the library, use Composer:
 
 ```bash
-composer require your-namespace/php-svg-piano-generator
+composer require your-namespace/php-svg-piano
 ```
 
-Ensure your PHP version is **8 or higher**.
+Ensure your PHP version is **8.2 or higher**.
 
 ### Quick Start Example
 
@@ -21,7 +21,6 @@ The library allows you to generate a piano diagram with just a few lines of code
 require 'vendor/autoload.php';
 
 use Ucscode\PhpSvgPiano\Piano;
-use Ucscode\PhpSvgPiano\Option;
 
 // Render a basic piano diagram.
 echo (new Piano())->render();
@@ -31,9 +30,11 @@ echo (new Piano())->render();
 
 ![Piano Plain](./images/piano.png)
 
+---
+
 ### Piano + Cmaj Chord
 
-You can render the piano while pressing down a note or  chord
+You can render the piano to simulate pressing down a note or  chord
 
 ```php
 // Render a piano diagram with the C major chord (C, E, G) pressed.
@@ -43,6 +44,8 @@ echo (new Piano())->render('C, E, G');
 #### Output
 
 ![Piano C Major](./images/piano-cmaj.png)
+
+---
 
 ### Piano + Title
 
@@ -56,6 +59,8 @@ echo (new Piano())->render('C, E_, G, B_', 'C Minor 7th');
 #### Output
 
 ![Piano C Minor 7th](./images/piano-cmin7-title.png)
+
+---
 
 ### Customizing the Piano
 

@@ -54,6 +54,8 @@ This call renders a basic piano diagram with no keys pressed, using default sett
 
 ![Piano Plain](./images/piano.png)
 
+---
+
 **Rendering a Piano with a Chord**
 
 ```php
@@ -63,6 +65,8 @@ echo (new Piano())->render('C, E, G');
 This call renders the piano with the keys corresponding to the C major chord pressed.
 
 ![Piano + C Major](./images/piano-cmaj.png)
+
+---
 
 **Rendering with Additional Options**
 
@@ -75,6 +79,8 @@ echo (new Piano())->render('C, E_, G, B_', ['title' => 'C Minor 7th']);
 ```
 
 ![Piano + C Major 7th + Title](./images/piano-cmin7-title.png)
+
+--
 
 In each case, the `render()` method internally constructs an `Option` object if necessary, and then delegates the drawing process to the `PianoBuilder` that uses the provided configuration and note inputs.
 

@@ -2,8 +2,8 @@
 
 In PHP SVG Piano, **Patterns** are the building blocks that determine the visual appearance of individual piano elements. The two primary pattern types exist: 
 
-1. KeyPattern
-2. TextPattern 
+1. [KeyPattern](#keypattern)
+2. [TextPattern](#textpattern) 
 
 These patterns allow you to precisely control the style of keys and their associated text.
 

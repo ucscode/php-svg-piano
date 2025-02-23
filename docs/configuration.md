@@ -1,6 +1,6 @@
 ## Configuration
 
-The **Configuration** class is the central hub for setting up how your piano is rendered. It aggregates various parameters—such as key and text patterns, octave range, and display toggles—into a single object that controls the entire rendering process. By using a `Configuration` instance, you can ensure consistency in how every element of the piano is drawn.
+The `Configuration` class is the central hub for setting up how your piano is rendered. It aggregates various parameters—such as key and text patterns, octave range, and display toggles—into a single object that controls the entire rendering process. By using a `Configuration` instance, you can ensure consistency in how every element of the piano is drawn.
 
 ### Key Components of Configuration
 
@@ -44,9 +44,9 @@ Imagine you want to tweak the default appearance of your natural keys and adjust
 ```php
 <?php
 use  Ucscode\PhpSvgPiano\Configuration;
-use  Ucscode\PhpSvgPiano\KeyPattern;
-use  Ucscode\PhpSvgPiano\RenderPattern;
-use  Ucscode\PhpSvgPiano\TextPattern;
+use  Ucscode\PhpSvgPiano\Pattern\KeyPattern;
+use  Ucscode\PhpSvgPiano\Pattern\RenderPattern;
+use  Ucscode\PhpSvgPiano\Pattern\TextPattern;
 
 // Create a custom configuration instance.
 $config = new Configuration();
@@ -55,8 +55,8 @@ $config = new Configuration();
 $naturalKeysRenderPattern = (new RenderPattern())
     ->setReleasedKeyPattern(new KeyPattern(30, 90, '#353535ff', '#f9f9f9ff'))
     ->setPressedKeyPattern(new KeyPattern(30, 90, '#353535ff', '#d3bc5fff'))
-    ->setReleasedTextPattern(new TextPattern('', 'darkgrey')->setFontSize(14))
-    ->setPressedTextPattern(new TextPattern('', 'white')->setFontFamily('monospace'))
+    ->setReleasedTextPattern((new TextPattern(0, 0, null, '#a9a9a9'))->setFontSize(14))
+    ->setPressedTextPattern((new TextPattern(0, 0, null, '#ffffff'))->setFontFamily('monospace'))
 ;
 
 $config->setNaturalKeyPattern($naturalKeysRenderPattern);

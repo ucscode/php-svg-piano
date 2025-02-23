@@ -2,6 +2,8 @@
 
 In the piano library, a **Pitch** represents a musical note with its letter name, accidental (if any), and octave number. Understanding pitch is essential for handling notes and chords correctly.
 
+---
+
 ### Understanding Accidentals
 
 Accidentals are symbols that modify a note's pitch. The common accidentals are:
@@ -9,9 +11,13 @@ Accidentals are symbols that modify a note's pitch. The common accidentals are:
 - **Sharp (`#`):** Raises the pitch by a semitone (e.g., C# is a semitone higher than C).
 - **Flat (`_`):** Lowers the pitch by a semitone (e.g., B_ is a semitone lower than B).
 
+---
+
 ### Why "`_`" is Used for Flats
 
 Since the standard flat symbol (&flat;) is not easily typable in plain text and can cause encoding issues in some environments, the library uses "`_`" as an alternative. This ensures compatibility across different systems while maintaining clear notation.
+
+---
 
 ### Enharmonic Equivalents
 
@@ -24,6 +30,8 @@ Some notes sound the same but are written differently. These are called **[enhar
   - If the note is flat (e.g., `A_`), it is rewritten as the next letter with a sharp (`G#`).
 
 This approach ensures that every pitch is consistently interpreted and prevents ambiguity in note representation.
+
+---
 
 ### Pitch Representation in the Library
 
